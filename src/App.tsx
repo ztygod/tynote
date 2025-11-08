@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Button } from "@/components/ui/button";
+import { useBearStore } from "./store";
 
-function App() {
+export default function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
 
@@ -11,11 +12,30 @@ function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
+  function BearCounter() {
+    const bears = useBearStore((state) => state.bears);
+    return <h1>{bears} around here ...</h1>;
+  }
+
+  function Controls() {
+    const increasePopulation = useBearStore(
+      (state) => state.increasePopulation
+    );
+
+    const clean = useBearStore((state) => state.removeAllBears);
+    return (
+      <>
+        <Button onClick={increasePopulation}>one up</Button>
+        <Button onClick={clean}> Clean </Button>
+      </>
+    );
+  }
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center">
       <Button>Click me</Button>
+      <BearCounter />
+      <Controls />
     </div>
   );
 }
-
-export default App;

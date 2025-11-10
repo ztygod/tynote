@@ -3,6 +3,8 @@
 import * as React from "react";
 import {
   AudioWaveform,
+  BookOpen,
+  Bot,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -13,7 +15,9 @@ import {
   PieChart,
   Search,
   Send,
+  Settings2,
   Sparkles,
+  SquareTerminal,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -55,6 +59,12 @@ const data = {
   ],
   navMain: [
     {
+      title: "Home",
+      url: "#",
+      icon: Home,
+      isActive: true,
+    },
+    {
       title: "Search",
       url: "#",
       icon: Search,
@@ -63,12 +73,6 @@ const data = {
       title: "Ask AI",
       url: "#",
       icon: Sparkles,
-    },
-    {
-      title: "Home",
-      url: "#",
-      icon: Home,
-      isActive: true,
     },
     {
       title: "Inbox",
@@ -91,19 +95,109 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      title: "Playground",
       url: "#",
-      icon: Frame,
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "History",
+          url: "#",
+        },
+        {
+          title: "Starred",
+          url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+          items: [
+            {
+              title: "History",
+              url: "#",
+            },
+            {
+              title: "Starred",
+              url: "#",
+            },
+          ],
+        },
+      ],
     },
     {
-      name: "Sales & Marketing",
+      title: "Models",
       url: "#",
-      icon: PieChart,
+      icon: Bot,
+      items: [
+        {
+          title: "Genesis",
+          url: "#",
+        },
+        {
+          title: "Explorer",
+          url: "#",
+        },
+        {
+          title: "Quantum",
+          url: "#",
+          items: [
+            {
+              title: "Genesis",
+              url: "#",
+            },
+            {
+              title: "Explorer",
+              url: "#",
+            },
+          ],
+        },
+      ],
     },
     {
-      name: "Travel",
+      title: "Documentation",
       url: "#",
-      icon: Map,
+      icon: BookOpen,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings2,
+      items: [
+        {
+          title: "General",
+          url: "#",
+        },
+        {
+          title: "Team",
+          url: "#",
+        },
+        {
+          title: "Billing",
+          url: "#",
+        },
+        {
+          title: "Limits",
+          url: "#",
+        },
+      ],
     },
   ],
 };
@@ -116,7 +210,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
+        <NavProjects items={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto mb" />
       </SidebarContent>
       <SidebarFooter>

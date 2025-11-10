@@ -46,9 +46,9 @@ function RenderItems({ items, depth = 0 }: { items: Item[]; depth?: number }) {
                       tooltip={item.title}
                       className="group/collapsible"
                     >
-                      {Icon && <Icon className="mr-2 h-4 w-4" />}
+                      <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      {Icon && <Icon className="h-4 w-4" />}
                       <span>{item.title}</span>
-                      <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 

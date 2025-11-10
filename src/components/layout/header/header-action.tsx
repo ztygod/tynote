@@ -98,7 +98,7 @@ const data = [
   ],
 ];
 
-export function NavActions() {
+export function HeaderActions() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {

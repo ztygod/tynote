@@ -6,13 +6,10 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Home,
   Inbox,
   LifeBuoy,
-  Map,
-  PieChart,
   Search,
   Send,
   Settings2,
@@ -20,10 +17,10 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { NavMain } from "@/components/layout/sidebar/nav-main";
+import { NavProjects } from "@/components/layout/sidebar/nav-projects";
+import { NavUser } from "@/components/layout/sidebar/nav-user";
+import { TeamSwitcher } from "@/components/layout/sidebar/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +28,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavSecondary } from "./nac-secondary";
+import { NavSecondary } from "./nav-secondary";
 
 // This is sample data.
 const data = {

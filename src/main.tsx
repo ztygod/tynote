@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { RouterProvider } from "react-router";
+import { BrowserRouter, RouterProvider } from "react-router";
 import { router } from "./router";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

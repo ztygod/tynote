@@ -12,6 +12,7 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { ChevronRight, LucideIcon } from "lucide-react";
+import { AddButtonGroupDropdown } from "./components/add-button";
 
 interface Item {
   title: string;
@@ -29,7 +30,7 @@ function RenderItems({ items, depth = 0 }: { items: Item[]; depth?: number }) {
           ? ""
           : depth === 1
           ? "pl-2 border-l border-border/20"
-          : "pl-1 border-l border-border/20"
+          : "pl-3 border-l border-border/20"
       }
     >
       {items.map((item) => {
@@ -46,9 +47,19 @@ function RenderItems({ items, depth = 0 }: { items: Item[]; depth?: number }) {
                       tooltip={item.title}
                       className="group/collapsible"
                     >
-                      <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      {Icon && <Icon className="h-4 w-4" />}
-                      <span>{item.title}</span>
+                      <div className="pr-8 flex items-center justify-center">
+                        {depth === 0 ? (
+                          <>
+                            {Icon && <Icon className="mr-2 h-4 w-4" />}
+                            <span>{item.title}</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                            <span className="ml-1">{item.title}</span>
+                          </>
+                        )}
+                      </div>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 
@@ -77,7 +88,14 @@ function RenderItems({ items, depth = 0 }: { items: Item[]; depth?: number }) {
 export function NavProjects({ items }: { items: Item[] }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Collections</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <div className="flex items-center justify-between">
+          <p>Collections</p>
+          <div className="ml-32">
+            <AddButtonGroupDropdown />
+          </div>
+        </div>
+      </SidebarGroupLabel>
       <RenderItems items={items} />
     </SidebarGroup>
   );

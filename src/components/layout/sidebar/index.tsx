@@ -5,16 +5,13 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  CircleGauge,
   Command,
   GalleryVerticalEnd,
   Home,
-  Inbox,
-  LifeBuoy,
-  Search,
-  Send,
   Settings2,
-  Sparkles,
   SquareTerminal,
+  Star,
 } from "lucide-react";
 
 import { NavMain } from "@/components/layout/sidebar/nav-main";
@@ -28,7 +25,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavSecondary } from "./nav-secondary";
+import { NavSearch } from "./nav-search";
 
 // This is sample data.
 const data = {
@@ -57,37 +54,20 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "#",
+      url: "/home",
       icon: Home,
       isActive: true,
     },
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
+      title: "DashBoard",
+      url: "/dashboard",
+      icon: CircleGauge,
     },
     {
-      title: "Ask AI",
-      url: "#",
-      icon: Sparkles,
-    },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
+      title: "Starred",
+      url: "/starred",
+      icon: Star,
       badge: "10",
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
     },
   ],
   projects: [
@@ -104,6 +84,20 @@ const data = {
         {
           title: "Starred",
           url: "#",
+        },
+        {
+          title: "Settings",
+          url: "#",
+          items: [
+            {
+              title: "History",
+              url: "#",
+            },
+            {
+              title: "Starred",
+              url: "#",
+            },
+          ],
         },
         {
           title: "Settings",
@@ -204,11 +198,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
+        <NavSearch />
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
         <NavProjects items={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto mb" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

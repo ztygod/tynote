@@ -1,15 +1,15 @@
-import { AppSidebar } from "./sidebar/app-sidebar";
+import { AppSidebar } from "./sidebar";
 import { SidebarInset, SidebarProvider } from "../ui/sidebar";
 import { AppHeader } from "./header/app-header";
-import { AppContent } from "./content/app-content";
+import { Outlet } from "react-router";
 
 export function AppLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <AppHeader />
-        <AppContent />
+        {/* <AppHeader /> */}
+        <Outlet />
       </SidebarInset>
     </SidebarProvider>
   );

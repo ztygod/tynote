@@ -121,3 +121,16 @@
     transition-duration: 150ms;
   }
 }
+
+/* 解决垂直滚动条造成的页面抖动 */
+html {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* 适用于 WebKit 内核的浏览器 (Chrome, Safari, Edge, Tauri的WebView2) */
+/* 将滚动条宽高设置为 0，防止一些组件的的显隐藏造成页面的抖动*/
+::-webkit-scrollbar {
+  width: 0px; /* 设置滚动条宽度 */
+  height: 0px; /* 设置水平滚动条高度 */
+}

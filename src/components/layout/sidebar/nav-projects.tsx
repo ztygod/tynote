@@ -90,8 +90,8 @@ export function NavProjects({ items }: { items: Item[] }) {
     <SidebarGroup>
       <SidebarGroupLabel>
         <div className="flex items-center justify-between">
-          <p>Collections</p>
-          <div className="ml-32">
+          <p>Notes</p>
+          <div className="ml-38">
             <AddButtonGroupDropdown />
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  AlarmClockCheck,
   AudioWaveform,
   BookOpen,
   Bot,
@@ -57,6 +58,11 @@ const data = {
       url: "/home",
       icon: Home,
       isActive: true,
+    },
+    {
+      title: "Todo",
+      url: "/todo",
+      icon: AlarmClockCheck,
     },
     {
       title: "DashBoard",

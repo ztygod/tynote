@@ -17,6 +17,7 @@ export function NavMain({
     url: string;
     icon: LucideIcon;
     isActive?: boolean;
+    color?: string;
   }[];
 }) {
   return (
@@ -25,7 +26,7 @@ export function NavMain({
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild isActive={item.isActive}>
             <Link to={item.url}>
-              <item.icon />
+              <item.icon className={item.color} />
               <span>{item.title}</span>
             </Link>
           </SidebarMenuButton>

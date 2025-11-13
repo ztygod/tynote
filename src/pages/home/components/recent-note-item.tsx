@@ -232,7 +232,7 @@ export const RecentActivitySection: React.FC = () => (
     </h2>
 
     <Tabs defaultValue="edited" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 bg-muted">
+      <TabsList className="grid w-100 grid-cols-3 bg-muted">
         <TabsTrigger value="edited">
           <FileText className="h-4 w-4 mr-2" /> 最近编辑
         </TabsTrigger>

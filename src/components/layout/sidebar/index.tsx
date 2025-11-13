@@ -58,22 +58,26 @@ const data = {
       url: "/home",
       icon: Home,
       isActive: true,
+      color: "text-blue-500",
     },
     {
       title: "Todo",
       url: "/todo",
       icon: AlarmClockCheck,
+      color: "text-emerald-500",
     },
     {
       title: "DashBoard",
       url: "/dashboard",
       icon: CircleGauge,
+      color: "text-black-500",
     },
     {
       title: "Starred",
       url: "/starred",
       icon: Star,
       badge: "10",
+      color: "text-yellow-500",
     },
   ],
   projects: [

@@ -9,6 +9,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Star } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -32,7 +34,7 @@ export function PinnedNoteCard({ notes }: PinnedNoteCardProps) {
     <>
       <Carousel
         plugins={[autoplay.current]}
-        className="w-full"
+        className="w-92/100 mx-auto"
         onMouseEnter={autoplay.current.stop}
         onMouseLeave={autoplay.current.reset}
       >
@@ -64,6 +66,8 @@ export function PinnedNoteCard({ notes }: PinnedNoteCardProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
       </Carousel>
     </>
   );

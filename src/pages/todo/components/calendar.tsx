@@ -1,26 +1,60 @@
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+"use client";
 
-export function CalendarItem() {
-  const [date, setDate] = useState(new Date());
+import { faker } from "@faker-js/faker";
+import {
+  CalendarBody,
+  CalendarDate,
+  CalendarDatePagination,
+  CalendarDatePicker,
+  CalendarHeader,
+  CalendarItem,
+  CalendarMonthPicker,
+  CalendarProvider,
+  CalendarYearPicker,
+} from "@/components/ui/shadcn-io/calendar";
+const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const statuses = [
+  { id: faker.string.uuid(), name: "Planned", color: "#6B7280" },
+  { id: faker.string.uuid(), name: "In Progress", color: "#F59E0B" },
+  { id: faker.string.uuid(), name: "Done", color: "#10B981" },
+];
+const exampleFeatures = Array.from({ length: 20 })
+  .fill(null)
+  .map(() => ({
+    id: faker.string.uuid(),
+    name: capitalize(faker.company.buzzPhrase()),
+    startAt: faker.date.past({ years: 0.5, refDate: new Date() }),
+    endAt: faker.date.future({ years: 0.5, refDate: new Date() }),
+    status: faker.helpers.arrayElement(statuses),
+  }));
+const earliestYear =
+  exampleFeatures
+    .map((feature) => feature.startAt.getFullYear())
+    .sort()
+    .at(0) ?? new Date().getFullYear();
+const latestYear =
+  exampleFeatures
+    .map((feature) => feature.endAt.getFullYear())
+    .sort()
+    .at(-1) ?? new Date().getFullYear();
 
+export function Calendar() {
   return (
     <>
-      <div className="lg:col-span-1 space-y-8">
-        <section>
-          <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
-            <CalendarIcon size={20} className="text-red-500" /> 日历
-          </h2>
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            className="p-0 rounded-lg border [--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]"
-            required
-          />
-        </section>
-      </div>
+      <CalendarProvider>
+        <CalendarDate>
+          <CalendarDatePicker>
+            <CalendarMonthPicker />
+            <CalendarYearPicker end={latestYear} start={earliestYear} />
+          </CalendarDatePicker>
+          <CalendarDatePagination />
+        </CalendarDate>
+        <CalendarHeader />
+        <CalendarBody features={exampleFeatures}>
+          {({ feature }) => <CalendarItem feature={feature} key={feature.id} />}
+        </CalendarBody>
+      </CalendarProvider>
+      ;
     </>
   );
 }

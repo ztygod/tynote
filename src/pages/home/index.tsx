@@ -49,13 +49,19 @@ const pinnedNotes = [
   },
 ];
 
-export function Home() {
+export function HomePage() {
   return (
     <div className="bg-muted/20 text-foreground min-h-screen">
-      <div className="max-w-screen-xl mx-auto p-3 sm:p-4 md:p-5">
+      <div className="max-w-screen-xl mx-auto p-4 sm:p-7 md:p-8">
         <header>
           <HomeHeader />
         </header>
+        <div className="mx-auto text-center py-6">
+          <h1 className="text-3xl font-bold mr-10">👋 欢迎回来, Alex!</h1>
+          <p className="text-muted-foreground mt-1 mr-10">
+            今天是个创造的好日子。
+          </p>
+        </div>
         <main className="space-y-10">
           <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
             <Star size={20} className="text-yellow-500" /> 收藏内容
@@ -67,5 +73,3 @@ export function Home() {
     </div>
   );
 }
-
-export default Home;

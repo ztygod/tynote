@@ -10,12 +10,16 @@ import {
 } from "@/components/ui/shadcn-io/list";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+
 const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const statuses = [
   { id: faker.string.uuid(), name: "Planned", color: "#6B7280" },
   { id: faker.string.uuid(), name: "In Progress", color: "#F59E0B" },
   { id: faker.string.uuid(), name: "Done", color: "#10B981" },
 ];
+
 const users = Array.from({ length: 4 })
   .fill(null)
   .map(() => ({
@@ -23,6 +27,7 @@ const users = Array.from({ length: 4 })
     name: faker.person.fullName(),
     image: faker.image.avatar(),
   }));
+
 const exampleFeatures = Array.from({ length: 20 })
   .fill(null)
   .map(() => ({
@@ -32,9 +37,37 @@ const exampleFeatures = Array.from({ length: 20 })
     endAt: faker.date.future({ years: 0.5, refDate: new Date() }),
     status: faker.helpers.arrayElement(statuses),
     owner: faker.helpers.arrayElement(users),
+    priority: faker.helpers.arrayElement(["low", "medium", "high"]),
   }));
+
+function getPriorityBadge(priority: string) {
+  switch (priority) {
+    case "high":
+      return (
+        <Badge variant="destructive" className="text-xs">
+          高
+        </Badge>
+      );
+    case "medium":
+      return (
+        <Badge variant="secondary" className="text-xs">
+          中
+        </Badge>
+      );
+    case "low":
+      return (
+        <Badge variant="outline" className="text-xs">
+          低
+        </Badge>
+      );
+    default:
+      return null;
+  }
+}
+
 export function List() {
   const [features, setFeatures] = useState(exampleFeatures);
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) {
@@ -53,6 +86,7 @@ export function List() {
       })
     );
   };
+
   return (
     <ListProvider onDragEnd={handleDragEnd}>
       {statuses.map((status) => (
@@ -76,14 +110,17 @@ export function List() {
                   <p className="m-0 flex-1 font-medium text-sm">
                     {feature.name}
                   </p>
-                  {feature.owner && (
-                    <Avatar className="h-4 w-4 shrink-0">
-                      <AvatarImage src={feature.owner.image} />
-                      <AvatarFallback>
-                        {feature.owner.name?.slice(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {getPriorityBadge(feature.priority)}
+                    {feature.owner && (
+                      <Avatar className="h-5 w-5 shrink-0">
+                        <AvatarImage src={feature.owner.image} />
+                        <AvatarFallback className="text-xs">
+                          {feature.owner.name?.slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
                 </ListItem>
               ))}
           </ListItems>

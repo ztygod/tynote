@@ -1,5 +1,5 @@
-"use client";
 import { faker } from "@faker-js/faker";
+// @ts-ignore
 import {
   GanttCreateMarkerTrigger,
   GanttFeatureItem,
@@ -14,6 +14,7 @@ import {
   GanttTimeline,
   GanttToday,
 } from "@/components/ui/shadcn-io/gantt";
+// @ts-ignore
 import { groupBy } from "lodash";
 import { EyeIcon, LinkIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
@@ -24,12 +25,15 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+
 const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const statuses = [
   { id: faker.string.uuid(), name: "Planned", color: "#6B7280" },
   { id: faker.string.uuid(), name: "In Progress", color: "#F59E0B" },
   { id: faker.string.uuid(), name: "Done", color: "#10B981" },
 ];
+
 const users = Array.from({ length: 4 })
   .fill(null)
   .map(() => ({
@@ -37,30 +41,35 @@ const users = Array.from({ length: 4 })
     name: faker.person.fullName(),
     image: faker.image.avatar(),
   }));
+
 const exampleGroups = Array.from({ length: 6 })
   .fill(null)
   .map(() => ({
     id: faker.string.uuid(),
     name: capitalize(faker.company.buzzPhrase()),
   }));
+
 const exampleProducts = Array.from({ length: 4 })
   .fill(null)
   .map(() => ({
     id: faker.string.uuid(),
     name: capitalize(faker.company.buzzPhrase()),
   }));
+
 const exampleInitiatives = Array.from({ length: 2 })
   .fill(null)
   .map(() => ({
     id: faker.string.uuid(),
     name: capitalize(faker.company.buzzPhrase()),
   }));
+
 const exampleReleases = Array.from({ length: 3 })
   .fill(null)
   .map(() => ({
     id: faker.string.uuid(),
     name: capitalize(faker.company.buzzPhrase()),
   }));
+
 const exampleFeatures = Array.from({ length: 20 })
   .fill(null)
   .map(() => ({
@@ -75,6 +84,7 @@ const exampleFeatures = Array.from({ length: 20 })
     initiative: faker.helpers.arrayElement(exampleInitiatives),
     release: faker.helpers.arrayElement(exampleReleases),
   }));
+
 const exampleMarkers = Array.from({ length: 6 })
   .fill(null)
   .map(() => ({
@@ -90,6 +100,7 @@ const exampleMarkers = Array.from({ length: 6 })
       "bg-teal-100 text-teal-900",
     ]),
   }));
+
 export function Gantt() {
   const [features, setFeatures] = useState(exampleFeatures);
   const groupedFeatures = groupBy(features, "group.name");
@@ -98,6 +109,7 @@ export function Gantt() {
       nameA.localeCompare(nameB)
     )
   );
+
   const handleViewFeature = (id: string) =>
     console.log(`Feature selected: ${id}`);
   const handleCopyLink = (id: string) => console.log(`Copy link: ${id}`);
@@ -120,17 +132,18 @@ export function Gantt() {
   };
   const handleAddFeature = (date: Date) =>
     console.log(`Add feature: ${date.toISOString()}`);
+
   return (
     <GanttProvider
-      className="border"
+      className="border border-border rounded-lg"
       onAddItem={handleAddFeature}
       range="monthly"
       zoom={100}
     >
       <GanttSidebar>
-        {Object.entries(sortedGroupedFeatures).map(([group, features]) => (
+        {Object.entries(sortedGroupedFeatures).map(([group, features]: any) => (
           <GanttSidebarGroup key={group} name={group}>
-            {features.map((feature) => (
+            {(features as any[]).map((feature: any) => (
               <GanttSidebarItem
                 feature={feature}
                 key={feature.id}
@@ -143,62 +156,66 @@ export function Gantt() {
       <GanttTimeline>
         <GanttHeader />
         <GanttFeatureList>
-          {Object.entries(sortedGroupedFeatures).map(([group, features]) => (
-            <GanttFeatureListGroup key={group}>
-              {features.map((feature) => (
-                <div className="flex" key={feature.id}>
-                  <ContextMenu>
-                    <ContextMenuTrigger asChild>
-                      <button
-                        onClick={() => handleViewFeature(feature.id)}
-                        type="button"
-                      >
-                        <GanttFeatureItem
-                          onMove={handleMoveFeature}
-                          {...feature}
+          {Object.entries(sortedGroupedFeatures).map(
+            ([group, features]: any) => (
+              <GanttFeatureListGroup key={group}>
+                {(features as any[]).map((feature: any) => (
+                  <div className="flex" key={feature.id}>
+                    <ContextMenu>
+                      <ContextMenuTrigger asChild>
+                        <button
+                          onClick={() => handleViewFeature(feature.id)}
+                          type="button"
                         >
-                          <p className="flex-1 truncate text-xs">
-                            {feature.name}
-                          </p>
-                          {feature.owner && (
-                            <Avatar className="h-4 w-4">
-                              <AvatarImage src={feature.owner.image} />
-                              <AvatarFallback>
-                                {feature.owner.name?.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                        </GanttFeatureItem>
-                      </button>
-                    </ContextMenuTrigger>
-                    <ContextMenuContent>
-                      <ContextMenuItem
-                        className="flex items-center gap-2"
-                        onClick={() => handleViewFeature(feature.id)}
-                      >
-                        <EyeIcon className="text-muted-foreground" size={16} />
-                        View feature
-                      </ContextMenuItem>
-                      <ContextMenuItem
-                        className="flex items-center gap-2"
-                        onClick={() => handleCopyLink(feature.id)}
-                      >
-                        <LinkIcon className="text-muted-foreground" size={16} />
-                        Copy link
-                      </ContextMenuItem>
-                      <ContextMenuItem
-                        className="flex items-center gap-2 text-destructive"
-                        onClick={() => handleRemoveFeature(feature.id)}
-                      >
-                        <TrashIcon size={16} />
-                        Remove from roadmap
-                      </ContextMenuItem>
-                    </ContextMenuContent>
-                  </ContextMenu>
-                </div>
-              ))}
-            </GanttFeatureListGroup>
-          ))}
+                          <GanttFeatureItem
+                            onMove={handleMoveFeature}
+                            {...feature}
+                          >
+                            <p className="flex-1 truncate text-xs">
+                              {feature.name}
+                            </p>
+                            {feature.owner && (
+                              <Avatar className="h-4 w-4">
+                                <AvatarImage src={feature.owner.image} />
+                                <AvatarFallback>
+                                  {feature.owner.name?.slice(0, 2)}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </GanttFeatureItem>
+                        </button>
+                      </ContextMenuTrigger>
+                      <ContextMenuContent>
+                        <ContextMenuItem
+                          className="flex items-center gap-2"
+                          onClick={() => handleViewFeature(feature.id)}
+                        >
+                          <EyeIcon
+                            className="text-muted-foreground"
+                            size={16}
+                          />
+                          查看详情
+                        </ContextMenuItem>
+                        <ContextMenuItem
+                          className="flex items-center gap-2"
+                          onClick={() => handleCopyLink(feature.id)}
+                        >
+                          复制链接
+                        </ContextMenuItem>
+                        <ContextMenuItem
+                          className="flex items-center gap-2 text-destructive"
+                          onClick={() => handleRemoveFeature(feature.id)}
+                        >
+                          <TrashIcon size={16} />
+                          删除
+                        </ContextMenuItem>
+                      </ContextMenuContent>
+                    </ContextMenu>
+                  </div>
+                ))}
+              </GanttFeatureListGroup>
+            )
+          )}
         </GanttFeatureList>
         {exampleMarkers.map((marker) => (
           <GanttMarker

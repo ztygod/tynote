@@ -1,9 +1,9 @@
 import { AppLayout } from "@/components/layout/app-layout";
 import { AppContent } from "@/components/layout/content/app-content";
-import { DashBoard } from "@/pages/dashboard";
 import { HomePage } from "@/pages/home";
 import { TodoPage } from "@/pages/todo";
 import { createBrowserRouter } from "react-router";
+import { StarredPage } from "@/pages/starred";
 
 export const router = createBrowserRouter([
   {
@@ -16,12 +16,12 @@ export const router = createBrowserRouter([
         Component: HomePage,
       },
       {
-        path: "/dashboard",
-        Component: DashBoard,
-      },
-      {
         path: "/todo",
         Component: TodoPage,
+      },
+      {
+        path: "/starred",
+        Component: StarredPage,
       },
     ],
   },

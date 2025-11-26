@@ -137,13 +137,10 @@ function SettingItem() {
 export function Toolbar({ className }: ToolBarProps) {
   return (
     <>
-      <div className={cn("flex gap-2 ml-10", className)}>
+      <div className={cn("flex", className)}>
         <SortItem />
         <SearchItem />
         <SettingItem />
-        <Button>
-          <Plus size={16} /> 新建
-        </Button>
       </div>
     </>
   );

@@ -25,8 +25,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavSearch } from "./nav-search";
+import { useEffect, useRef, useState } from "react";
 
 // This is sample data.
 const data = {
@@ -204,20 +206,51 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(256); // w-64 默认 256px
+  const { open } = useSidebar();
+
+  useEffect(() => {
+    open ? setSidebarWidth(256) : setSidebarWidth(48);
+  }, [open]); // 当折叠状态 open 变化时更新宽度
+
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-        <NavSearch />
-        <NavMain items={data.navMain} />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavProjects items={data.projects} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <>
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <TeamSwitcher teams={data.teams} />
+          <NavSearch />
+          <NavMain
+            items={data.navMain}
+            onInboxClick={setIsInboxOpen}
+            isInboxOpen={isInboxOpen}
+          />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavProjects items={data.projects} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+      {isInboxOpen && (
+        <aside
+          className="fixed top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-lg z-50 transition-transform transform"
+          style={{ transform: `translateX(${sidebarWidth}px)` }}
+        >
+          <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+            <h2 className="font-bold text-lg">Inbox</h2>
+            <button
+              onClick={() => setIsInboxOpen(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              关闭
+            </button>
+          </div>
+          <div className="p-4">{/* Inbox 内容 */}</div>
+        </aside>
+      )}
+    </>
   );
 }

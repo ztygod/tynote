@@ -167,10 +167,17 @@ export function StarredPage() {
       <div className="max-w-screen-xl mx-auto p-4 sm:p-7 md:p-8">
         {/* Header Section */}
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3 mb-4">
-            <Star size={32} className="text-yellow-500 fill-yellow-500" />
-            收藏内容
-          </h1>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-foreground/90">
+              <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                <Star
+                  size={28}
+                  className="text-yellow-600 dark:text-yellow-500 fill-yellow-500"
+                />
+              </div>
+              收藏中心
+            </h1>
+          </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <ChevronRight size={20} />

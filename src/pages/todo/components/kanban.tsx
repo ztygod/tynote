@@ -19,11 +19,12 @@ const columns = [
   { id: faker.string.uuid(), name: "Done", color: "#10B981" },
 ];
 
-const columnsColor: Record<string, string> = {
-  Planned: "#D1D5DB",
-  Progress: "#FDE68A",
-  Done: "#6EE7B7",
+const bgMap: Record<string, string> = {
+  Planned: "bg-[var(--color-gray-200)]",
+  Progress: "bg-[var(--color-yellow-200)]",
+  Done: "bg-[var(--color-green-200)]",
 };
+
 const users = Array.from({ length: 4 })
   .fill(null)
   .map(() => ({
@@ -102,10 +103,7 @@ export function Kanban() {
               </span>
             </div>
           </KanbanHeader>
-          <KanbanCards
-            id={column.id}
-            style={{ backgroundColor: columnsColor[column.name] }}
-          >
+          <KanbanCards id={column.id} className={`${bgMap[column.name]}`}>
             {(feature: (typeof features)[number]) => (
               <KanbanCard
                 column={column.id}

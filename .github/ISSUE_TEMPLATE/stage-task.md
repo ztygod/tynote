@@ -15,6 +15,7 @@ assignees: ''
 - Example: performance bottleneck, refactoring, preparing a new feature（示例：性能瓶颈 / 重构需求 / 新功能准备上线）
 - Expected value and impact（预期价值与影响）
 
+---
 
 ### ✅ Stage Goals (Measurable) | 阶段目标（可量化）
 
@@ -22,6 +23,7 @@ assignees: ''
 - [ ] 目标 2 | Goal 2
 - [ ] 目标 3 | Goal 3
 
+---
 
 ### 🧩 Task Breakdown (Checklist) | 任务拆分 
 
@@ -29,6 +31,7 @@ assignees: ''
 - [ ] 任务 2 | Task 2
 - [ ] 任务 3 | Task 3
 
+---
 
 ### 🔗 Dependencies & Risks | 依赖与风险
 
@@ -36,15 +39,10 @@ assignees: ''
 - Risks（风险）:
 - Mitigation plan（规避方案）:
 
+---
+
 
 ### ⏱ Timeline | 时间规划
 
 - Planned start date（计划开始时间）:
 - Planned end date（计划结束时间）:
-
-
-### 🏁 Acceptance Notes | 验收与复盘
-
-- Final result（最终结果）:
-- Did we meet the goals?（是否达成目标？）
-- Lessons learned（经验复盘）:

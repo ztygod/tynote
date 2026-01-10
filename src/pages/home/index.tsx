@@ -1,4 +1,4 @@
-import { Notebook, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { PinnedNoteCard } from "./components/pinned-note-card";
 import { RecentActivitySection } from "./components/recent-note-item";
 import { HomeHeader } from "./components/home-header";

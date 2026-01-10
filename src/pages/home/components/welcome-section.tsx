@@ -17,10 +17,9 @@ export function WelcomeSection() {
       <h1 className="text-4xl font-bold tracking-tight text-foreground animate-in fade-in duration-1000">
         {greeting} {userName}!{" "}
         <span
-          className="inline-block origin-[70%_70%]"
-          style={{
-            animation: isWaving ? "wave 0.6s ease-in-out 2" : "none",
-          }}
+          className={`inline-block origin-[70%_70%] ${
+            isWaving ? "wave-animation" : ""
+          }`}
         >
           👋
         </span>
@@ -28,14 +27,6 @@ export function WelcomeSection() {
       <p className="text-lg text-muted-foreground mt-2">
         今天是个创造的好日子。
       </p>
-      <style>{`
-        @keyframes wave {
-          0%, 100% { transform: rotate(0deg); }
-          25% { transform: rotate(15deg); }
-          50% { transform: rotate(-10deg); }
-          75% { transform: rotate(10deg); }
-        }
-      `}</style>
     </div>
   );
 }

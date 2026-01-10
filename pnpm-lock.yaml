@@ -156,9 +156,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.6.0
         version: 4.7.0(vite@7.2.2(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2))
-      baseline-browser-mapping:
-        specifier: ^2.9.14
-        version: 2.9.14
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0

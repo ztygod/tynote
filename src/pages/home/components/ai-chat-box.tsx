@@ -139,6 +139,7 @@ export function AiChatBox() {
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
             size="icon"
+            aria-label="发送消息"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

@@ -36,7 +36,7 @@ interface PinnedNoteCardProps {
 }
 
 export function PinnedNoteCard({ notes }: PinnedNoteCardProps) {
-  const autoplay = useRef(Autoplay({ delay: 4000, stopOnInteraction: true }));
+  const autoplay = useRef(Autoplay({ delay: 1500, stopOnInteraction: true }));
 
   if (notes.length === 0) {
     return (
@@ -106,6 +106,7 @@ function PinnedNoteItem({ note }: PinnedNoteItemProps) {
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity -mr-1 -mt-1"
+                aria-label="更多操作"
               >
                 <MoreHorizontal size={14} />
               </Button>

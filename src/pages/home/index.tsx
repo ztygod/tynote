@@ -2,8 +2,10 @@ import { Star } from "lucide-react";
 import { PinnedNoteCard } from "./components/pinned-note-card";
 import { RecentActivitySection } from "./components/recent-note-item";
 import { HomeHeader } from "./components/home-header";
+import { QuickStatsSection } from "./components/quick-stats";
+import { WelcomeSection } from "./components/welcome-section";
+import { AiChatBox } from "./components/ai-chat-box";
 
-// --- 模拟数据 ---
 const pinnedNotes = [
   {
     id: 1,
@@ -53,20 +55,39 @@ export function HomePage() {
   return (
     <div className="bg-muted/20 text-foreground min-h-screen">
       <div className="max-w-screen-xl mx-auto p-4 sm:p-7 md:p-8">
-        <header>
-          <HomeHeader />
-        </header>
-        <div className="mx-auto text-center py-6">
-          <h1 className="text-3xl font-bold mr-10">👋 欢迎回来, Alex!</h1>
-          <p className="text-muted-foreground mt-1 mr-10">
-            今天是个创造的好日子。
-          </p>
+        {/* Header */}
+        <HomeHeader />
+
+        {/* Welcome Section */}
+        <WelcomeSection />
+
+        {/* Quick Stats */}
+        <QuickStatsSection />
+
+        {/* AI Chat Box */}
+        <div className="mb-8 mt-6">
+          <AiChatBox />
         </div>
-        <main className="space-y-10">
-          <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
-            <Star size={20} className="text-yellow-500" /> 收藏内容
-          </h2>
-          <PinnedNoteCard notes={pinnedNotes} />
+
+        {/* Main Content */}
+        <main className="space-y-8 mt-8">
+          {/* Pinned Notes Section */}
+          <section>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                  <Star
+                    size={24}
+                    className="text-yellow-600 dark:text-yellow-500 fill-yellow-500"
+                  />
+                </div>
+                收藏内容
+              </h2>
+            </div>
+            <PinnedNoteCard notes={pinnedNotes} />
+          </section>
+
+          {/* Recent Activity Section */}
           <RecentActivitySection />
         </main>
       </div>

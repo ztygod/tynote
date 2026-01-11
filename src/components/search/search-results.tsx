@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +13,10 @@ export function SearchResults({ results }: SearchResultsProps) {
   const { sortBy, setSortBy, isLoading } = useSearchStore();
 
   const sortedResults = React.useMemo(() => {
+    if (!results || results.length <= 1) {
+      return results;
+    }
+
     const sorted = [...results];
     switch (sortBy) {
       case "time-desc":
@@ -45,27 +47,33 @@ export function SearchResults({ results }: SearchResultsProps) {
     let lastIndex = 0;
     const parts: React.ReactNode[] = [];
 
-    keywords.forEach((keyword) => {
-      const regex = new RegExp(keyword, "gi");
-      let match;
+    const escapedKeywords = keywords
+      .filter((keyword) => keyword)
+      .map((keyword) => keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 
-      while ((match = regex.exec(text)) !== null) {
-        // 添加匹配前的文本
-        if (match.index > lastIndex) {
-          parts.push(text.slice(lastIndex, match.index));
-        }
-        // 添加高亮的匹配文本
-        parts.push(
-          <span
-            key={`highlight-${match.index}`}
-            className="bg-yellow-200 dark:bg-yellow-900 font-semibold"
-          >
-            {match[0]}
-          </span>
-        );
-        lastIndex = match.index + match[0].length;
+    if (escapedKeywords.length === 0) {
+      return text;
+    }
+
+    const regex = new RegExp(escapedKeywords.join("|"), "gi");
+
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      // 添加匹配前的文本
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
       }
-    });
+      // 添加高亮的匹配文本
+      parts.push(
+        <span
+          key={`highlight-${match.index}-${match[0]}`}
+          className="bg-yellow-200 dark:bg-yellow-900 font-semibold"
+        >
+          {match[0]}
+        </span>
+      );
+      lastIndex = match.index + match[0].length;
+    }
 
     // 添加剩余文本
     if (lastIndex < text.length) {

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Search as SearchIcon, Lightbulb } from "lucide-react";
 import {
@@ -18,6 +16,7 @@ import {
   type SearchMode,
   type SearchResult,
 } from "@/store/search-store";
+import { isApplePlatform } from "@/utils";
 
 // Mock 数据生成函数
 function generateMockResults(query: string): SearchResult[] {
@@ -122,7 +121,7 @@ export function SearchDialog() {
     }, 300); // 防抖
 
     return () => clearTimeout(timer);
-  }, [query, handleSearch]);
+  }, [query, mode]);
 
   // 处理模式切换
   const handleModeChange = (value: string) => {
@@ -195,7 +194,7 @@ export function SearchDialog() {
                   className="h-10"
                 />
                 <Button onClick={handleSearch} className="px-6">
-                  搜索
+                  提问
                 </Button>
               </div>
               <div className="text-xs text-muted-foreground">
@@ -259,7 +258,7 @@ export function SearchDialog() {
           <div>
             支持快捷键：
             <kbd className="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">
-              ⌘K
+              {isApplePlatform() ? "⌘K" : "Ctrl+K"}
             </kbd>{" "}
             或{" "}
             <kbd className="px-2 py-1 bg-slate-200 dark:bg-slate-700 rounded">

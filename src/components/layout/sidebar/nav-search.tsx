@@ -1,10 +1,9 @@
-"use client";
-
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Search } from "lucide-react";
 import { useSearchStore } from "@/store/search-store";
+import { isApplePlatform } from "@/utils";
 
 export function NavSearch() {
   const { state } = useSidebar();
@@ -46,7 +45,9 @@ export function NavSearch() {
         <>
           <Search className="h-4 w-4" />
           <span>搜索</span>
-          <span className="ml-auto text-xs text-muted-foreground">⌘K</span>
+          <span className="ml-auto text-xs text-muted-foreground">
+            {isApplePlatform() ? "⌘K" : "Ctrl+K"}
+          </span>
         </>
       )}
     </Button>

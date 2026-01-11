@@ -39,7 +39,7 @@ export interface SearchStoreType {
   // 过滤条件
   filters: SearchFilters;
   setFilters: (filters: SearchFilters) => void;
-  updateFilter: (key: keyof SearchFilters, value: any) => void;
+  updateFilter: <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => void;
   clearFilters: () => void;
 
   // 搜索结果

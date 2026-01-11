@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import ThemeSwitchButton from "./components/common/ThemeSwitchButton";
 
 export default function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -10,9 +9,5 @@ export default function App() {
     setGreetMsg(await invoke("greet", { name }));
   }
 
-  return (
-    <>
-      <ThemeSwitchButton></ThemeSwitchButton>
-    </>
-  );
+  return <></>;
 }

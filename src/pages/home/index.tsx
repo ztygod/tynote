@@ -5,6 +5,7 @@ import { HomeHeader } from "./components/home-header";
 import { QuickStatsSection } from "./components/quick-stats";
 import { WelcomeSection } from "./components/welcome-section";
 import { AiChatBox } from "./components/ai-chat-box";
+import { QuicklinksSection } from "./components/quicklinks-section";
 
 const pinnedNotes = [
   {
@@ -60,6 +61,9 @@ export function HomePage() {
 
         {/* Welcome Section */}
         <WelcomeSection />
+
+        {/* Quicklinks Section */}
+        <QuicklinksSection editable={true} />
 
         {/* Quick Stats */}
         <QuickStatsSection />

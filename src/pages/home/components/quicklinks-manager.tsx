@@ -94,7 +94,7 @@ export function QuicklinksManager({
         order: 0,
       });
     }
-  }, [selectedQuicklink, open]);
+  }, [selectedQuicklink]);
 
   const handleSubmit = () => {
     if (!formData.title.trim()) {
@@ -105,6 +105,17 @@ export function QuicklinksManager({
     if (!formData.target.trim()) {
       toast.error("请输入链接目标");
       return;
+    }
+
+    // 对外部链接进行 URL 格式校验，防止保存无效或格式错误的地址
+    if (formData.linkType === "external") {
+      try {
+        // 使用内置 URL 构造函数进行基本格式验证
+        new URL(formData.target.trim());
+      } catch {
+        toast.error("请输入有效的网址（例如：https://example.com）");
+        return;
+      }
     }
 
     try {
@@ -183,7 +194,7 @@ export function QuicklinksManager({
                 <button
                   key={emoji}
                   type="button"
-                  {...(formData.icon === emoji ? { "aria-pressed": true } : {})}
+                  aria-pressed={formData.icon === emoji}
                   title={emoji}
                   onClick={() =>
                     setFormData((prev) => ({ ...prev, icon: emoji }))

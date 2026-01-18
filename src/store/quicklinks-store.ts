@@ -33,7 +33,7 @@ export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
     set((state) => {
       const newQuicklink: Quicklink = {
         ...quicklink,
-        id: `quicklink_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `quicklink_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
         createdAt: Date.now(),
         updatedAt: Date.now(),
         order: (state.quicklinks.length > 0 
@@ -63,10 +63,28 @@ export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
 
   reorderQuicklinks: (orderedIds) =>
     set((state) => {
-      const updated = orderedIds.map((id, index) => {
-        const quicklink = state.quicklinks.find((q) => q.id === id);
-        return quicklink ? { ...quicklink, order: index } : null;
-      }).filter(Boolean) as Quicklink[];
+      const quicklinksById = new Map(state.quicklinks.map((q) => [q.id, q] as const));
+      const updated: Quicklink[] = [];
+      for (const id of orderedIds) {
+        const quicklink = quicklinksById.get(id);
+        if (!quicklink) {
+          continue;
+        }
+        updated.push({
+          ...quicklink,
+          order: updated.length,
+        });
+        quicklinksById.delete(id);
+      }
+      const remaining = Array.from(quicklinksById.values()).sort(
+        (a, b) => a.order - b.order
+      );
+      for (const quicklink of remaining) {
+        updated.push({
+          ...quicklink,
+          order: updated.length,
+        });
+      }
       setStorage(QUICKLINKS_STORAGE_KEY, updated);
       return { quicklinks: updated };
     }),

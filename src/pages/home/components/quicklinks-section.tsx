@@ -5,16 +5,18 @@ import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { QuicklinksManager } from "./quicklinks-manager";
 
-interface QuicklinksectionProps {
+interface QuicklinksSectionProps {
   editable?: boolean;
 }
 
-export function QuicklinksSection({ editable = false }: QuicklinksectionProps) {
+export function QuicklinksSection({
+  editable = false,
+}: QuicklinksSectionProps) {
   const { quicklinks, initializeQuicklinks, deleteQuicklink } =
     useQuicklinksStore();
   const [managerOpen, setManagerOpen] = useState(false);
   const [selectedQuicklink, setSelectedQuicklink] = useState<Quicklink | null>(
-    null
+    null,
   );
 
   useEffect(() => {

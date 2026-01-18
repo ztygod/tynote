@@ -1,7 +1,13 @@
 import { Quicklink } from "@/store/quicklinks-store";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { ExternalLink, Edit2, Trash2 } from "lucide-react";
+import {
+  ExternalLink,
+  Edit2,
+  Trash2,
+  FileText,
+  BookOpenText,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -36,19 +42,20 @@ export function QuicklinkCard({
         }
 
         // 检查目标是否已包含 URL 协议（例如 mailto:, http:, https: 等）
-        const hasScheme = /^[a-zA-Z][\w+.-]*:/i.test(raw);
+        const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(raw);
         const url = hasScheme ? raw : `https://${raw}`;
 
         // 如果在 Tauri 环境中运行，优先使用 shell API 打开（如果可用）
-        if ((window as any).__TAURI__ && (window as any).tauri?.shell?.open) {
+        const tauri = (window as any).__TAURI__;
+        if (tauri?.shell?.open) {
           try {
-            (window as any).tauri.shell.open(url);
+            tauri.shell.open(url);
             return;
           } catch (err) {
             // 若调用失败，则回退到浏览器打开逻辑
             console.warn(
               "tauri.shell.open failed, falling back to browser open",
-              err
+              err,
             );
           }
         }
@@ -101,8 +108,10 @@ export function QuicklinkCard({
                   {quicklink.linkType === "external" && (
                     <ExternalLink size={12} />
                   )}
-                  {quicklink.linkType === "internal" && <Edit2 size={12} />}
-                  {quicklink.linkType === "knowledge" && <Edit2 size={12} />}
+                  {quicklink.linkType === "internal" && <FileText size={12} />}
+                  {quicklink.linkType === "knowledge" && (
+                    <BookOpenText size={12} />
+                  )}
                   <span>
                     {quicklink.linkType === "external" && "外部链接"}
                     {quicklink.linkType === "internal" && "内部链接"}

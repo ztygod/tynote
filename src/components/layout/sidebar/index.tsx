@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   AlarmClockCheck,
@@ -28,7 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NavSearch } from "./nav-search";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 // This is sample data.
 const data = {
@@ -67,6 +65,12 @@ const data = {
       url: "/todo",
       icon: AlarmClockCheck,
       color: "text-emerald-500",
+    },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Bot,
+      color: "text-purple-500",
     },
     {
       title: "Starred",

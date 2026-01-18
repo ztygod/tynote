@@ -4,6 +4,7 @@ import { HomePage } from "@/pages/home";
 import { TodoPage } from "@/pages/todo";
 import { createBrowserRouter } from "react-router";
 import { StarredPage } from "@/pages/starred";
+import { DashboardPage } from "@/pages/dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ export const router = createBrowserRouter([
       {
         path: "/home",
         Component: HomePage,
+      },
+      {
+        path: "/dashboard",
+        Component: DashboardPage
       },
       {
         path: "/todo",

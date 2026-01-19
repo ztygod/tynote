@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 import { PinnedNoteCard } from "./components/pinned-note-card";
 import { RecentActivitySection } from "./components/recent-note-item";
 import { HomeHeader } from "./components/home-header";
-import { QuickStatsSection } from "./components/quick-stats";
+// QuickStatsSection moved to Dashboard page
 import { WelcomeSection } from "./components/welcome-section";
 import { AiChatBox } from "./components/ai-chat-box";
 import { QuicklinksSection } from "./components/quicklinks-section";
@@ -65,8 +65,7 @@ export function HomePage() {
         {/* Quicklinks Section */}
         <QuicklinksSection editable={true} />
 
-        {/* Quick Stats */}
-        <QuickStatsSection />
+        {/* Quick Stats moved to Dashboard */}
 
         {/* AI Chat Box */}
         <div className="mb-8 mt-6">

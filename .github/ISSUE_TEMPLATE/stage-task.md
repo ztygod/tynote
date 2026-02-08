@@ -8,7 +8,7 @@ assignees: ''
 
 ---
 
-## Stage Task（阶段任务）
+## Stage Task
 
 ### Background & Purpose | 背景与目的 
 

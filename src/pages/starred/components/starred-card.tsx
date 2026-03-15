@@ -7,33 +7,28 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, ExternalLink, Copy } from "lucide-react";
-import { useState } from "react";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { Heart, ExternalLink, Copy, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-
-export interface StarredItem {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  url?: string;
-  image?: string;
-  date: string;
-  starred: boolean;
-}
+import { StarredItem, useStarredStore } from "@/store/starred-store";
 
 interface StarredCardProps {
   item: StarredItem;
-  onToggleStar?: (id: string) => void;
+  onEdit?: (item: StarredItem) => void;
+  onDelete?: (item: StarredItem) => void;
 }
 
-export function StarredCard({ item, onToggleStar }: StarredCardProps) {
-  const [isStarred, setIsStarred] = useState(item.starred);
+export function StarredCard({ item, onEdit, onDelete }: StarredCardProps) {
+  const { toggleStar } = useStarredStore();
 
   const handleToggleStar = () => {
-    setIsStarred(!isStarred);
-    onToggleStar?.(item.id);
+    toggleStar(item.id);
   };
 
   const handleCopyUrl = () => {
@@ -43,18 +38,26 @@ export function StarredCard({ item, onToggleStar }: StarredCardProps) {
     }
   };
 
+  const handleOpenInNewTab = () => {
+    if (item.url) {
+      window.open(item.url, "_blank");
+    }
+  };
+
   return (
-    <Card
-      className="group relative
-        hover:-translate-y-2
-        hover:shadow-xl
-        transition-all duration-300
-        rounded-xl cursor-pointer
-        border border-transparent
-        hover:border-primary/30
-        bg-card
-        hover:bg-accent/40"
-    >
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <Card
+          className="group relative
+            hover:-translate-y-2
+            hover:shadow-xl
+            transition-all duration-300
+            rounded-xl cursor-pointer
+            border border-transparent
+            hover:border-primary/30
+            bg-card
+            hover:bg-accent/40"
+        >
       {item.image ? (
         <div className="w-full h-40 bg-muted overflow-hidden rounded-t-lg -mt-6">
           <img
@@ -101,7 +104,7 @@ export function StarredCard({ item, onToggleStar }: StarredCardProps) {
             <Heart
               size={18}
               className={
-                isStarred
+                item.starred
                   ? "fill-red-500 text-red-500"
                   : "text-muted-foreground"
               }
@@ -155,5 +158,37 @@ export function StarredCard({ item, onToggleStar }: StarredCardProps) {
         )}
       </CardContent>
     </Card>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-48">
+        {onEdit && (
+          <ContextMenuItem onClick={() => onEdit(item)}>
+            <Edit size={16} className="mr-2" />
+            编辑
+          </ContextMenuItem>
+        )}
+        {onDelete && (
+          <ContextMenuItem
+            onClick={() => onDelete(item)}
+            className="text-destructive focus:text-destructive"
+          >
+            <Trash2 size={16} className="mr-2" />
+            删除
+          </ContextMenuItem>
+        )}
+        {(onEdit || onDelete) && item.url && <ContextMenuSeparator />}
+        {item.url && (
+          <>
+            <ContextMenuItem onClick={handleOpenInNewTab}>
+              <ExternalLink size={16} className="mr-2" />
+              在新标签页打开
+            </ContextMenuItem>
+            <ContextMenuItem onClick={handleCopyUrl}>
+              <Copy size={16} className="mr-2" />
+              复制链接
+            </ContextMenuItem>
+          </>
+        )}
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }

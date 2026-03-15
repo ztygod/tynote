@@ -13,6 +13,7 @@ import { useState } from "react";
 export interface FilterOptions {
   categories: string[];
   sortBy: "recent" | "oldest" | "alphabetical";
+  tags: string[];
 }
 
 interface StarredFilterProps {

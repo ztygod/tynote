@@ -31,7 +31,11 @@ interface StarredEditorProps {
 
 const DEFAULT_CATEGORIES = ["技术", "设计", "产品", "运营", "其他"];
 
-export function StarredEditor({ open, onOpenChange, item }: StarredEditorProps) {
+export function StarredEditor({
+  open,
+  onOpenChange,
+  item,
+}: StarredEditorProps) {
   const { addStarredItem, updateStarredItem } = useStarredStore();
   const isEditing = !!item;
 
@@ -71,8 +75,9 @@ export function StarredEditor({ open, onOpenChange, item }: StarredEditorProps) 
   const validateUrl = (urlString: string): boolean => {
     if (!urlString) return true; // URL is optional
     try {
-      new URL(urlString);
-      return true;
+      const parsed = new URL(urlString);
+      const allowedProtocols = ["http:", "https:", "mailto:"];
+      return allowedProtocols.includes(parsed.protocol);
     } catch {
       return false;
     }
@@ -127,8 +132,9 @@ export function StarredEditor({ open, onOpenChange, item }: StarredEditorProps) 
       tags,
       url: url.trim() || undefined,
       image: image.trim() || undefined,
-      date: new Date().toISOString().split("T")[0],
-      starred: true,
+      date:
+        isEditing && item ? item.date : new Date().toISOString().split("T")[0],
+      starred: isEditing && item ? item.starred : true,
     };
 
     if (isEditing && item) {
@@ -267,9 +273,7 @@ export function StarredEditor({ open, onOpenChange, item }: StarredEditorProps) 
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             取消
           </Button>
-          <Button onClick={handleSubmit}>
-            {isEditing ? "保存" : "添加"}
-          </Button>
+          <Button onClick={handleSubmit}>{isEditing ? "保存" : "添加"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

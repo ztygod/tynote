@@ -13,10 +13,11 @@ import { useState } from "react";
 export interface FilterOptions {
   categories: string[];
   sortBy: "recent" | "oldest" | "alphabetical";
+  tags: string[];
 }
 
 interface StarredFilterProps {
-  onFilterChange?: (filters: FilterOptions) => void;
+  onFilterChange?: (filters: Partial<FilterOptions>) => void;
   availableCategories?: string[];
 }
 
@@ -26,7 +27,7 @@ export function StarredFilter({
 }: StarredFilterProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<"recent" | "oldest" | "alphabetical">(
-    "recent"
+    "recent",
   );
 
   const handleCategoryToggle = (category: string) => {

@@ -1,82 +1,63 @@
-import { useQuicklinksStore, Quicklink } from "@/store/quicklinks-store";
-import { QuicklinkCard } from "./quicklink-card";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { useQuicklinksStore, type Quicklink } from "@/store/quicklinks-store";
+import { QuicklinkCard } from "./quicklink-card";
 import { QuicklinksManager } from "./quicklinks-manager";
 
 interface QuicklinksSectionProps {
+  quicklinks: Quicklink[];
+  totalCount: number;
   editable?: boolean;
 }
 
 export function QuicklinksSection({
+  quicklinks,
+  totalCount,
   editable = false,
 }: QuicklinksSectionProps) {
-  const { quicklinks, initializeQuicklinks, deleteQuicklink } =
-    useQuicklinksStore();
+  const deleteQuicklink = useQuicklinksStore((s) => s.deleteQuicklink);
   const [managerOpen, setManagerOpen] = useState(false);
-  const [selectedQuicklink, setSelectedQuicklink] = useState<Quicklink | null>(
-    null,
-  );
-
-  useEffect(() => {
-    initializeQuicklinks();
-  }, [initializeQuicklinks]);
-
-  if (quicklinks.length === 0 && !editable) {
-    return null;
-  }
+  const [selectedQuicklink, setSelectedQuicklink] = useState<Quicklink | null>(null);
 
   return (
     <>
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <svg
-                className="w-5 h-5 text-blue-600 dark:text-blue-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold">快捷链接</h2>
+      <section className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold tracking-tight">快捷链接</h2>
+            <p className="text-sm text-muted-foreground">
+              当前显示 {quicklinks.length} 项，共 {totalCount} 项。
+            </p>
           </div>
 
-          {editable && (
+          {editable ? (
             <Button
-              variant="ghost"
-              size="sm"
+              variant="outline"
+              className="h-10 rounded-xl"
               onClick={() => {
                 setSelectedQuicklink(null);
                 setManagerOpen(true);
               }}
-              className="gap-2"
             >
               <Plus size={16} />
-              新增
+              新增快捷链接
             </Button>
-          )}
+          ) : null}
         </div>
 
         {quicklinks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             {quicklinks
+              .slice()
               .sort((a, b) => a.order - b.order)
               .map((quicklink) => (
                 <QuicklinkCard
                   key={quicklink.id}
                   quicklink={quicklink}
                   editable={editable}
-                  onEdit={(ql) => {
-                    setSelectedQuicklink(ql);
+                  onEdit={(item) => {
+                    setSelectedQuicklink(item);
                     setManagerOpen(true);
                   }}
                   onDelete={(id) => {
@@ -85,23 +66,14 @@ export function QuicklinksSection({
                 />
               ))}
           </div>
-        ) : editable ? (
-          <div className="rounded-lg border-2 border-dashed border-border p-12 text-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="p-3 bg-muted rounded-lg">
-                <Plus size={24} className="text-muted-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground mb-1">
-                  还没有快捷链接
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  点击上方"新增"按钮来添加您的第一个快捷链接
-                </p>
-              </div>
-            </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-border/60 bg-card p-12 text-center shadow-sm">
+            <p className="text-sm font-medium">未找到快捷链接</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              新增一个快捷链接以加速常用导航。
+            </p>
           </div>
-        ) : null}
+        )}
       </section>
 
       <QuicklinksManager

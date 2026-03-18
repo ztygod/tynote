@@ -1,21 +1,17 @@
-import { useState, useEffect } from "react";
-import {
-  useQuicklinksStore,
-  Quicklink,
-  LinkType,
-} from "@/store/quicklinks-store";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useQuicklinksStore, type LinkType, type Quicklink } from "@/store/quicklinks-store";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -23,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuicklinksManagerProps {
   open: boolean;
@@ -31,109 +27,63 @@ interface QuicklinksManagerProps {
   selectedQuicklink?: Quicklink | null;
 }
 
-const COMMON_EMOJIS = [
-  "🏠",
-  "📝",
+const COMMON_ICONS = [
+  "📌",
+  "📂",
   "✅",
   "⭐",
-  "🔖",
-  "📚",
-  "🎯",
+  "🔍",
+  "📝",
   "📊",
+  "🎯",
   "🔗",
   "🌐",
-  "💼",
-  "📧",
-  "🔔",
-  "⚙️",
-  "🔍",
-  "❤️",
+  "💡",
+  "📚",
 ];
 
 const INTERNAL_PAGES = [
   { value: "/home", label: "首页" },
+  { value: "/dashboard", label: "仪表盘" },
   { value: "/todo", label: "待办事项" },
   { value: "/starred", label: "收藏内容" },
-  { value: "/inbox", label: "收件箱" },
 ];
+
+const INITIAL_FORM: Omit<Quicklink, "id" | "createdAt" | "updatedAt"> = {
+  title: "",
+  description: "",
+  linkType: "internal",
+  target: "/home",
+  icon: "🔗",
+  order: 0,
+};
 
 export function QuicklinksManager({
   open,
   onOpenChange,
   selectedQuicklink,
 }: QuicklinksManagerProps) {
-  const { addQuicklink, updateQuicklink } = useQuicklinksStore();
-  const [formData, setFormData] = useState<
-    Omit<Quicklink, "id" | "createdAt" | "updatedAt">
-  >({
-    title: "",
-    description: "",
-    linkType: "internal",
-    target: "/home",
-    icon: "🔗",
-    order: 0,
-  });
+  const addQuicklink = useQuicklinksStore((s) => s.addQuicklink);
+  const updateQuicklink = useQuicklinksStore((s) => s.updateQuicklink);
+  const [formData, setFormData] = useState(INITIAL_FORM);
 
   useEffect(() => {
-    if (selectedQuicklink) {
-      setFormData({
-        title: selectedQuicklink.title,
-        description: selectedQuicklink.description || "",
-        linkType: selectedQuicklink.linkType,
-        target: selectedQuicklink.target,
-        icon: selectedQuicklink.icon || "🔗",
-        order: selectedQuicklink.order,
-      });
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        linkType: "internal",
-        target: "/home",
-        icon: "🔗",
-        order: 0,
-      });
+    if (!selectedQuicklink) {
+      setFormData(INITIAL_FORM);
+      return;
     }
+
+    setFormData({
+      title: selectedQuicklink.title,
+      description: selectedQuicklink.description || "",
+      linkType: selectedQuicklink.linkType,
+      target: selectedQuicklink.target,
+      icon: selectedQuicklink.icon || "🔗",
+      order: selectedQuicklink.order,
+    });
   }, [selectedQuicklink]);
 
-  const handleSubmit = () => {
-    if (!formData.title.trim()) {
-      toast.error("请输入链接标题");
-      return;
-    }
-
-    if (!formData.target.trim()) {
-      toast.error("请输入链接目标");
-      return;
-    }
-
-    // 对外部链接进行 URL 格式校验，防止保存无效或格式错误的地址
-    if (formData.linkType === "external") {
-      try {
-        // 使用内置 URL 构造函数进行基本格式验证
-        new URL(formData.target.trim());
-      } catch {
-        toast.error("请输入有效的网址（例如：https://example.com）");
-        return;
-      }
-    }
-
-    try {
-      if (selectedQuicklink) {
-        updateQuicklink(selectedQuicklink.id, formData);
-        toast.success("快捷链接已更新");
-      } else {
-        addQuicklink(formData);
-        toast.success("快捷链接已添加");
-      }
-      onOpenChange(false);
-    } catch (error) {
-      toast.error("操作失败");
-      console.error(error);
-    }
-  };
-
-  const handleLinkTypeChange = (value: LinkType) => {
+  const handleTypeChange = (value: LinkType) => {
     setFormData((prev) => ({
       ...prev,
       linkType: value,
@@ -141,119 +91,129 @@ export function QuicklinksManager({
     }));
   };
 
+  const handleSubmit = () => {
+    if (!formData.title.trim()) {
+      toast.error("请输入标题。");
+      return;
+    }
+
+    if (!formData.target.trim()) {
+      toast.error("请输入目标地址。");
+      return;
+    }
+
+    if (formData.linkType === "external") {
+      try {
+        new URL(formData.target.trim());
+      } catch {
+        toast.error("请输入有效的网址（例如：https://example.com）。");
+        return;
+      }
+    }
+
+    try {
+      if (selectedQuicklink) {
+        updateQuicklink(selectedQuicklink.id, formData);
+        toast.success("快捷链接已更新。");
+      } else {
+        addQuicklink(formData);
+        toast.success("快捷链接已创建。");
+      }
+      onOpenChange(false);
+    } catch (error) {
+      toast.error("保存快捷链接失败。");
+      console.error(error);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {selectedQuicklink ? "编辑快捷链接" : "新增快捷链接"}
-          </DialogTitle>
+          <DialogTitle>{selectedQuicklink ? "编辑快捷链接" : "新增快捷链接"}</DialogTitle>
           <DialogDescription>
-            {selectedQuicklink
-              ? "修改快捷链接的信息"
-              : "创建一个新的快捷链接以快速访问常用功能"}
+            配置常用入口，便于快速访问目标页面或资源。
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">标题 *</Label>
+            <Label htmlFor="quicklink-title">标题</Label>
             <Input
-              id="title"
-              placeholder="如：我的待办"
+              id="quicklink-title"
+              placeholder="例如：迭代看板"
               value={formData.title}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              onChange={(event) =>
+                setFormData((prev) => ({ ...prev, title: event.target.value }))
               }
             />
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">描述</Label>
+            <Label htmlFor="quicklink-description">描述</Label>
             <Textarea
-              id="description"
-              placeholder="可选：添加描述来说明这个链接的作用"
+              id="quicklink-description"
+              className="h-20 resize-none"
+              placeholder="可选：补充该链接的用途说明"
               value={formData.description}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
+              onChange={(event) =>
+                setFormData((prev) => ({ ...prev, description: event.target.value }))
               }
-              className="resize-none h-20"
             />
           </div>
 
-          {/* Icon */}
           <div className="space-y-2">
-            <Label htmlFor="icon">图标</Label>
-            <div className="flex gap-2 mb-2 flex-wrap">
-              {COMMON_EMOJIS.map((emoji) => (
+            <Label htmlFor="quicklink-icon">图标</Label>
+            <div className="flex flex-wrap gap-2">
+              {COMMON_ICONS.map((icon) => (
                 <button
-                  key={emoji}
+                  key={icon}
                   type="button"
-                  aria-pressed={formData.icon === emoji}
-                  title={emoji}
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, icon: emoji }))
-                  }
-                  className={`text-2xl p-2 rounded transition-all select-none ${
-                    formData.icon === emoji
-                      ? "bg-primary/90 text-white ring-2 ring-primary"
-                      : "hover:bg-muted"
+                  onClick={() => setFormData((prev) => ({ ...prev, icon }))}
+                  className={`rounded-lg p-2 text-xl transition ${
+                    formData.icon === icon
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted hover:bg-accent"
                   }`}
+                  aria-pressed={formData.icon === icon}
                 >
-                  {emoji}
+                  {icon}
                 </button>
               ))}
             </div>
             <Input
-              id="icon"
-              placeholder="或输入自定义emoji"
+              id="quicklink-icon"
+              placeholder="或输入自定义图标"
               value={formData.icon}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, icon: e.target.value }))
+              onChange={(event) =>
+                setFormData((prev) => ({ ...prev, icon: event.target.value }))
               }
               maxLength={4}
             />
           </div>
 
-          {/* Link Type */}
           <div className="space-y-2">
-            <Label htmlFor="linkType">链接类型 *</Label>
-            <Select
-              value={formData.linkType}
-              onValueChange={handleLinkTypeChange}
-            >
-              <SelectTrigger id="linkType">
+            <Label htmlFor="quicklink-type">类型</Label>
+            <Select value={formData.linkType} onValueChange={handleTypeChange}>
+              <SelectTrigger id="quicklink-type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="internal">内部页面</SelectItem>
-                <SelectItem value="knowledge">知识库节点</SelectItem>
+                <SelectItem value="knowledge">知识节点</SelectItem>
                 <SelectItem value="external">外部链接</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Target */}
           <div className="space-y-2">
-            <Label htmlFor="target">
-              {formData.linkType === "internal" && "目标页面"}
-              {formData.linkType === "knowledge" && "节点ID"}
-              {formData.linkType === "external" && "链接地址"}
-            </Label>
-
+            <Label htmlFor="quicklink-target">目标</Label>
             {formData.linkType === "internal" ? (
               <Select
                 value={formData.target}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, target: value }))
-                }
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, target: value }))}
               >
-                <SelectTrigger id="target">
+                <SelectTrigger id="quicklink-target">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -266,15 +226,13 @@ export function QuicklinksManager({
               </Select>
             ) : (
               <Input
-                id="target"
+                id="quicklink-target"
                 placeholder={
-                  formData.linkType === "knowledge"
-                    ? "如：note-123456"
-                    : "如：https://example.com"
+                  formData.linkType === "external" ? "例如：https://example.com" : "例如：知识节点ID"
                 }
                 value={formData.target}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, target: e.target.value }))
+                onChange={(event) =>
+                  setFormData((prev) => ({ ...prev, target: event.target.value }))
                 }
               />
             )}
@@ -286,7 +244,7 @@ export function QuicklinksManager({
             取消
           </Button>
           <Button onClick={handleSubmit}>
-            {selectedQuicklink ? "保存更改" : "添加链接"}
+            {selectedQuicklink ? "保存修改" : "创建快捷链接"}
           </Button>
         </DialogFooter>
       </DialogContent>

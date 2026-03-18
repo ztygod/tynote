@@ -1,98 +1,58 @@
-import { Star } from "lucide-react";
-import { PinnedNoteCard } from "./components/pinned-note-card";
-import { RecentActivitySection } from "./components/recent-note-item";
-import { HomeHeader } from "./components/home-header";
-// QuickStatsSection moved to Dashboard page
-import { WelcomeSection } from "./components/welcome-section";
-import { AiChatBox } from "./components/ai-chat-box";
+import * as React from "react";
+import { useQuicklinksStore } from "@/store/quicklinks-store";
+import { HomeHero } from "./components/home-hero";
 import { QuicklinksSection } from "./components/quicklinks-section";
-
-const pinnedNotes = [
-  {
-    id: 1,
-    title: "项目Alpha启动会议纪要",
-    description: "讨论了Q4目标和资源分配...",
-    lastEdited: "2小时前",
-    emoji: "🚀",
-  },
-  {
-    id: 2,
-    title: "我的2025年旅行计划",
-    description: "目的地清单：冰岛、新西兰、日本...",
-    lastEdited: "昨天",
-    emoji: "✈️",
-  },
-  {
-    id: 3,
-    title: "React最佳实践",
-    description: "Hooks, Context, and Performance...",
-    lastEdited: "3天前",
-    emoji: "⚛️",
-  },
-  {
-    id: 1,
-    title: "项目Alpha启动会议纪要",
-    description: "讨论了Q4目标和资源分配...",
-    lastEdited: "2小时前",
-    emoji: "🚀",
-  },
-  {
-    id: 2,
-    title: "我的2025年旅行计划",
-    description: "目的地清单：冰岛、新西兰、日本...",
-    lastEdited: "昨天",
-    emoji: "✈️",
-  },
-  {
-    id: 3,
-    title: "React最佳实践",
-    description: "Hooks, Context, and Performance...",
-    lastEdited: "3天前",
-    emoji: "⚛️",
-  },
-];
+import { RecentActivitySection } from "./components/recent-note-item";
 
 export function HomePage() {
+  const quicklinks = useQuicklinksStore((s) => s.quicklinks);
+  const initializeQuicklinks = useQuicklinksStore((s) => s.initializeQuicklinks);
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  React.useEffect(() => {
+    initializeQuicklinks();
+  }, [initializeQuicklinks]);
+
+  const filteredQuicklinks = React.useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) {
+      return quicklinks;
+    }
+
+    return quicklinks.filter((quicklink) => {
+      const title = quicklink.title?.toLowerCase() ?? "";
+      const description = quicklink.description?.toLowerCase() ?? "";
+      return title.includes(query) || description.includes(query);
+    });
+  }, [quicklinks, searchQuery]);
+
+  const latestUpdatedAt = React.useMemo(() => {
+    if (quicklinks.length === 0) {
+      return null;
+    }
+
+    return Math.max(...quicklinks.map((quicklink) => quicklink.updatedAt));
+  }, [quicklinks]);
+
   return (
-    <div className="bg-muted/20 text-foreground min-h-screen">
-      <div className="max-w-screen-xl mx-auto p-4 sm:p-7 md:p-8">
-        {/* Header */}
-        <HomeHeader />
+    <div className="bg-muted/20 text-foreground">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
+        <HomeHero
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          matchedCount={filteredQuicklinks.length}
+          totalCount={quicklinks.length}
+          latestUpdatedAt={latestUpdatedAt}
+          onClearSearch={() => setSearchQuery("")}
+        />
 
-        {/* Welcome Section */}
-        <WelcomeSection />
+        <QuicklinksSection
+          quicklinks={filteredQuicklinks}
+          totalCount={quicklinks.length}
+          editable
+        />
 
-        {/* Quicklinks Section */}
-        <QuicklinksSection editable={true} />
-
-        {/* Quick Stats moved to Dashboard */}
-
-        {/* AI Chat Box */}
-        <div className="mb-8 mt-6">
-          <AiChatBox />
-        </div>
-
-        {/* Main Content */}
-        <main className="space-y-8 mt-8">
-          {/* Pinned Notes Section */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <Star
-                    size={24}
-                    className="text-yellow-600 dark:text-yellow-500 fill-yellow-500"
-                  />
-                </div>
-                收藏内容
-              </h2>
-            </div>
-            <PinnedNoteCard notes={pinnedNotes} />
-          </section>
-
-          {/* Recent Activity Section */}
-          <RecentActivitySection />
-        </main>
+        <RecentActivitySection />
       </div>
     </div>
   );

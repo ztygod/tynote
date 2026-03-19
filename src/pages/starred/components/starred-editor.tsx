@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,10 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 import { StarredItem, useStarredStore } from "@/store/starred-store";
+import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 
 interface StarredEditorProps {
   open: boolean;
@@ -38,9 +38,8 @@ export function StarredEditor({
 }: StarredEditorProps) {
   const addStarredItem = useStarredStore((state) => state.addStarredItem);
   const updateStarredItem = useStarredStore((state) => state.updateStarredItem);
-  const isEditing = !!item;
+  const isEditing = Boolean(item);
 
-  // Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -49,18 +48,17 @@ export function StarredEditor({
   const [image, setImage] = useState("");
   const [tagInput, setTagInput] = useState("");
 
-  // Initialize form with item data when editing
   useEffect(() => {
     if (item) {
       setTitle(item.title);
       setDescription(item.description);
       setCategory(item.category);
       setTags(item.tags);
-      setUrl(item.url || "");
-      setImage(item.image || "");
-    } else {
-      resetForm();
+      setUrl(item.url ?? "");
+      setImage(item.image ?? "");
+      return;
     }
+    resetForm();
   }, [item, open]);
 
   const resetForm = () => {
@@ -74,7 +72,10 @@ export function StarredEditor({
   };
 
   const validateUrl = (urlString: string): boolean => {
-    if (!urlString) return true; // URL is optional
+    if (!urlString) {
+      return true;
+    }
+
     try {
       const parsed = new URL(urlString);
       const allowedProtocols = ["http:", "https:", "mailto:"];
@@ -86,43 +87,36 @@ export function StarredEditor({
 
   const handleAddTag = () => {
     const trimmedTag = tagInput.trim();
-    if (trimmedTag && !tags.includes(trimmedTag)) {
-      setTags([...tags, trimmedTag]);
-      setTagInput("");
+    if (!trimmedTag || tags.includes(trimmedTag)) {
+      return;
     }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
+    setTags((prev) => [...prev, trimmedTag]);
+    setTagInput("");
   };
 
   const handleSubmit = () => {
-    // Validation
     if (!title.trim()) {
       toast.error("请输入标题");
       return;
     }
+
     if (!description.trim()) {
       toast.error("请输入描述");
       return;
     }
+
     if (!category) {
       toast.error("请选择分类");
       return;
     }
+
     if (url && !validateUrl(url)) {
-      toast.error("请输入有效的 URL");
+      toast.error("请输入有效的链接地址");
       return;
     }
+
     if (image && !validateUrl(image)) {
-      toast.error("请输入有效的图片 URL");
+      toast.error("请输入有效的图片地址");
       return;
     }
 
@@ -133,8 +127,7 @@ export function StarredEditor({
       tags,
       url: url.trim() || undefined,
       image: image.trim() || undefined,
-      date:
-        isEditing && item ? item.date : new Date().toISOString().split("T")[0],
+      date: isEditing && item ? item.date : new Date().toISOString().split("T")[0],
       starred: isEditing && item ? item.starred : true,
     };
 
@@ -152,35 +145,35 @@ export function StarredEditor({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-xl">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "编辑收藏" : "添加收藏"}</DialogTitle>
+          <DialogTitle>{isEditing ? "编辑收藏" : "新增收藏"}</DialogTitle>
           <DialogDescription>
-            {isEditing ? "修改收藏项的信息" : "添加新的收藏项到你的收藏中心"}
+            {isEditing ? "更新收藏信息" : "添加新的收藏内容到收藏中心"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Title */}
+        <div className="space-y-4 py-2">
           <div className="space-y-2">
             <Label htmlFor="title">
               标题 <span className="text-destructive">*</span>
             </Label>
             <Input
               id="title"
+              className="h-10 rounded-xl"
               placeholder="输入标题"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description">
               描述 <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="description"
+              className="rounded-xl"
               placeholder="输入描述"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -188,13 +181,12 @@ export function StarredEditor({
             />
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
             <Label htmlFor="category">
               分类 <span className="text-destructive">*</span>
             </Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger id="category">
+              <SelectTrigger id="category" className="h-10 rounded-xl">
                 <SelectValue placeholder="选择分类" />
               </SelectTrigger>
               <SelectContent>
@@ -207,35 +199,40 @@ export function StarredEditor({
             </Select>
           </div>
 
-          {/* Tags */}
           <div className="space-y-2">
             <Label htmlFor="tags">标签</Label>
             <div className="flex gap-2">
               <Input
                 id="tags"
-                placeholder="输入标签后按 Enter 添加"
+                className="h-10 rounded-xl"
+                placeholder="输入标签后按 Enter"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
               />
               <Button
                 type="button"
                 variant="outline"
-                size="icon"
+                className="h-10 rounded-xl px-3"
                 onClick={handleAddTag}
               >
                 <Plus size={16} />
               </Button>
             </div>
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="mt-2 flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="gap-1">
+                  <Badge key={tag} variant="secondary" className="gap-1 rounded-lg">
                     {tag}
                     <button
                       type="button"
-                      onClick={() => handleRemoveTag(tag)}
                       className="ml-1 hover:text-destructive"
+                      onClick={() => setTags((prev) => prev.filter((itemTag) => itemTag !== tag))}
                     >
                       <X size={12} />
                     </button>
@@ -245,24 +242,24 @@ export function StarredEditor({
             )}
           </div>
 
-          {/* URL */}
           <div className="space-y-2">
-            <Label htmlFor="url">链接 URL (可选)</Label>
+            <Label htmlFor="url">链接 URL（可选）</Label>
             <Input
               id="url"
               type="url"
+              className="h-10 rounded-xl"
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
           </div>
 
-          {/* Image URL */}
           <div className="space-y-2">
-            <Label htmlFor="image">图片 URL (可选)</Label>
+            <Label htmlFor="image">图片 URL（可选）</Label>
             <Input
               id="image"
               type="url"
+              className="h-10 rounded-xl"
               placeholder="https://example.com/image.jpg"
               value={image}
               onChange={(e) => setImage(e.target.value)}
@@ -271,10 +268,12 @@ export function StarredEditor({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" className="rounded-xl" onClick={() => onOpenChange(false)}>
             取消
           </Button>
-          <Button onClick={handleSubmit}>{isEditing ? "保存" : "添加"}</Button>
+          <Button className="rounded-xl" onClick={handleSubmit}>
+            {isEditing ? "保存" : "添加"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

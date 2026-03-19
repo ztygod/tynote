@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tag } from "lucide-react";
@@ -34,25 +34,24 @@ export function TagFilter({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          size="sm"
-          className={`gap-2 ${
+          className={`h-10 gap-2 rounded-xl ${
             hasSelectedTags ? "border-primary text-primary" : ""
           }`}
         >
           <Tag size={16} />
           标签
           {hasSelectedTags && (
-            <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
               {selectedTags.length}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 max-h-96 overflow-y-auto">
+      <DropdownMenuContent align="end" className="max-h-96 w-56 overflow-y-auto rounded-xl">
         <DropdownMenuLabel>按标签筛选</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {availableTags.length === 0 ? (
-          <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+          <div className="px-3 py-4 text-center text-sm text-muted-foreground">
             暂无标签
           </div>
         ) : (
@@ -63,9 +62,7 @@ export function TagFilter({
               onCheckedChange={() => handleTagToggle(tag)}
             >
               <span className="flex-1">{tag}</span>
-              <span className="ml-2 text-xs text-muted-foreground">
-                {count}
-              </span>
+              <span className="ml-2 text-xs text-muted-foreground">{count}</span>
             </DropdownMenuCheckboxItem>
           ))
         )}

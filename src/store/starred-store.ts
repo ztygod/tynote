@@ -112,7 +112,7 @@ const MOCK_STARRED_ITEMS: Omit<StarredItem, "createdAt" | "updatedAt">[] = [
   },
 ];
 
-export const useStarredStore = create<StarredState>((set, get) => ({
+export const useStarredStore = create<StarredState>((set) => ({
   items: [],
 
   addStarredItem: (item) =>

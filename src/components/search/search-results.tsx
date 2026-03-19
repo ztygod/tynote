@@ -10,7 +10,9 @@ interface SearchResultsProps {
 }
 
 export function SearchResults({ results }: SearchResultsProps) {
-  const { sortBy, setSortBy, isLoading } = useSearchStore();
+  const sortBy = useSearchStore((state) => state.sortBy);
+  const setSortBy = useSearchStore((state) => state.setSortBy);
+  const isLoading = useSearchStore((state) => state.isLoading);
 
   const sortedResults = React.useMemo(() => {
     if (!results || results.length <= 1) {

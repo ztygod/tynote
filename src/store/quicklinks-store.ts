@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getStorage, setStorage } from "@/utils/storage";
+import { localStorageQuicklinksRepository } from "@/features/quicklinks/model/repository";
 
 export type LinkType = "internal" | "knowledge" | "external";
 
@@ -24,9 +24,7 @@ export interface QuicklinksState {
   initializeQuicklinks: () => void;
 }
 
-const QUICKLINKS_STORAGE_KEY = "tynote_quicklinks";
-
-export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
+export const useQuicklinksStore = create<QuicklinksState>((set) => ({
   quicklinks: [],
 
   addQuicklink: (quicklink) =>
@@ -41,7 +39,7 @@ export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
           : 0),
       };
       const updated = [...state.quicklinks, newQuicklink];
-      setStorage(QUICKLINKS_STORAGE_KEY, updated);
+      localStorageQuicklinksRepository.save(updated);
       return { quicklinks: updated };
     }),
 
@@ -50,14 +48,14 @@ export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
       const updated = state.quicklinks.map((q) =>
         q.id === id ? { ...q, ...updates, updatedAt: Date.now() } : q
       );
-      setStorage(QUICKLINKS_STORAGE_KEY, updated);
+      localStorageQuicklinksRepository.save(updated);
       return { quicklinks: updated };
     }),
 
   deleteQuicklink: (id) =>
     set((state) => {
       const updated = state.quicklinks.filter((q) => q.id !== id);
-      setStorage(QUICKLINKS_STORAGE_KEY, updated);
+      localStorageQuicklinksRepository.save(updated);
       return { quicklinks: updated };
     }),
 
@@ -85,12 +83,12 @@ export const useQuicklinksStore = create<QuicklinksState>((set, get) => ({
           order: updated.length,
         });
       }
-      setStorage(QUICKLINKS_STORAGE_KEY, updated);
+      localStorageQuicklinksRepository.save(updated);
       return { quicklinks: updated };
     }),
 
   initializeQuicklinks: () => {
-    const stored = getStorage<Quicklink[]>(QUICKLINKS_STORAGE_KEY, []) ?? [];
+    const stored = localStorageQuicklinksRepository.load();
     set({ quicklinks: stored });
   },
 }));

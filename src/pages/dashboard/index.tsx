@@ -2,12 +2,20 @@ import * as React from "react";
 import { formatDistanceToNow } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { Archive, Database, ExternalLink, SearchCheck } from "lucide-react";
-import { useQuicklinksStore } from "@/store/quicklinks-store";
-import { useSearchStore } from "@/store/search-store";
 import ChartsPanel from "@/pages/dashboard/components/charts-panel";
 import { DashboardHero } from "@/pages/dashboard/components/dashboard-hero";
 import { StatsGrid } from "@/pages/dashboard/components/stats-grid";
 import WorkloadCard from "@/pages/dashboard/components/workload-card";
+import {
+  buildQuicklinksTrendData,
+  countQuicklinksByType,
+  countRecentQuicklinks,
+  filterQuicklinksByQuery,
+  getLatestQuicklinkUpdatedAt,
+} from "@/features/quicklinks/model/selectors";
+import { getPageTheme } from "@/lib/page-theme";
+import { useQuicklinksStore } from "@/store/quicklinks-store";
+import { useSearchStore } from "@/store/search-store";
 
 function formatRelativeTime(timestamp: number | null) {
   if (!timestamp) {
@@ -24,6 +32,7 @@ export function DashboardPage() {
   const quicklinks = useQuicklinksStore((s) => s.quicklinks);
   const initializeQuicklinks = useQuicklinksStore((s) => s.initializeQuicklinks);
   const searchResultsCount = useSearchStore((s) => s.results.length);
+  const theme = getPageTheme("dashboard");
 
   const [lastRefreshed, setLastRefreshed] = React.useState<number | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -53,55 +62,23 @@ export function DashboardPage() {
   }, [autoRefresh, initializeQuicklinks]);
 
   const filteredQuicklinks = React.useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return quicklinks;
-    }
-
-    return quicklinks.filter((item) => {
-      const title = item.title?.toLowerCase() ?? "";
-      const description = item.description?.toLowerCase() ?? "";
-      return title.includes(query) || description.includes(query);
-    });
+    return filterQuicklinksByQuery(quicklinks, searchQuery);
   }, [quicklinks, searchQuery]);
 
   const latestUpdatedAt = React.useMemo(() => {
-    if (filteredQuicklinks.length === 0) {
-      return null;
-    }
-
-    return Math.max(...filteredQuicklinks.map((item) => item.updatedAt));
+    return getLatestQuicklinkUpdatedAt(filteredQuicklinks);
   }, [filteredQuicklinks]);
 
   const recentCount = React.useMemo(() => {
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    return filteredQuicklinks.filter((item) => item.updatedAt >= sevenDaysAgo).length;
+    return countRecentQuicklinks(filteredQuicklinks);
   }, [filteredQuicklinks]);
 
   const externalCount = React.useMemo(() => {
-    return filteredQuicklinks.filter((item) => item.linkType === "external").length;
+    return countQuicklinksByType(filteredQuicklinks, "external");
   }, [filteredQuicklinks]);
 
   const trendData = React.useMemo(() => {
-    const formatter = new Intl.DateTimeFormat("zh-CN", {
-      month: "numeric",
-      day: "numeric",
-    });
-
-    return Array.from({ length: 7 }, (_, index) => {
-      const date = new Date();
-      date.setHours(0, 0, 0, 0);
-      date.setDate(date.getDate() - (6 - index));
-
-      const start = date.getTime();
-      const end = start + 24 * 60 * 60 * 1000;
-      const value = quicklinks.filter((item) => item.updatedAt >= start && item.updatedAt < end).length;
-
-      return {
-        label: formatter.format(date),
-        value,
-      };
-    });
+    return buildQuicklinksTrendData(quicklinks);
   }, [quicklinks]);
 
   const stats = [
@@ -116,7 +93,7 @@ export function DashboardPage() {
     {
       title: "外部链接",
       value: `${externalCount}`,
-      description: "外部资源入口数量，便于判断跳转型内容占比。",
+      description: "外部资源入口数量，用于判断跳转型内容占比。",
       icon: ExternalLink,
       tone: "warning" as const,
       trend:
@@ -135,7 +112,7 @@ export function DashboardPage() {
     {
       title: "搜索缓存",
       value: `${searchResultsCount}`,
-      description: "当前搜索弹层中的结果数量，用于判断缓存是否活跃。",
+      description: "当前搜索结果缓存数量，可用于判断搜索活跃度。",
       icon: SearchCheck,
       tone: "neutral" as const,
       trend: lastRefreshed ? `刷新于 ${formatRelativeTime(lastRefreshed)}` : "尚未刷新",
@@ -151,17 +128,17 @@ export function DashboardPage() {
     {
       label: "筛选范围",
       value: searchQuery ? `${filteredQuicklinks.length} 项` : "全部",
-      status: searchQuery ? `当前关键词为“${searchQuery}”` : "未启用搜索过滤，显示全部快捷链接",
+      status: searchQuery ? `当前关键词：${searchQuery}` : "未启用搜索过滤，显示全部快捷链接",
     },
     {
       label: "最近更新时间",
       value: latestUpdatedAt ? formatRelativeTime(latestUpdatedAt) : "暂无",
-      status: latestUpdatedAt ? "至少存在一条近期有变更的快捷链接" : "当前没有可用的更新时间信息",
+      status: latestUpdatedAt ? "至少存在一条近期发生更新的快捷链接" : "当前没有可用的更新时间信息",
     },
   ];
 
   return (
-    <div className="bg-muted/20 text-foreground">
+    <div className={theme.pageBackground}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
         <DashboardHero
           searchQuery={searchQuery}
@@ -172,13 +149,14 @@ export function DashboardPage() {
           lastRefreshed={lastRefreshed}
           matchedCount={filteredQuicklinks.length}
           totalCount={quicklinks.length}
+          theme={theme}
         />
 
-        <StatsGrid stats={stats} />
+        <StatsGrid stats={stats} theme={theme} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <ChartsPanel data={trendData} />
-          <WorkloadCard items={workloadItems} />
+          <ChartsPanel data={trendData} theme={theme} />
+          <WorkloadCard items={workloadItems} theme={theme} />
         </div>
       </div>
     </div>

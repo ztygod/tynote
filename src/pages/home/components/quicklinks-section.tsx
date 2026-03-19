@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { PageThemeTokens } from "@/lib/page-theme";
+import { cn } from "@/lib/utils";
 import { useQuicklinksStore, type Quicklink } from "@/store/quicklinks-store";
 import { QuicklinkCard } from "./quicklink-card";
 import { QuicklinksManager } from "./quicklinks-manager";
@@ -9,12 +11,14 @@ interface QuicklinksSectionProps {
   quicklinks: Quicklink[];
   totalCount: number;
   editable?: boolean;
+  theme: PageThemeTokens;
 }
 
 export function QuicklinksSection({
   quicklinks,
   totalCount,
   editable = false,
+  theme,
 }: QuicklinksSectionProps) {
   const deleteQuicklink = useQuicklinksStore((s) => s.deleteQuicklink);
   const [managerOpen, setManagerOpen] = useState(false);
@@ -34,7 +38,7 @@ export function QuicklinksSection({
           {editable ? (
             <Button
               variant="outline"
-              className="h-10 rounded-xl"
+              className={cn("h-10 rounded-xl", theme.outlineButton)}
               onClick={() => {
                 setSelectedQuicklink(null);
                 setManagerOpen(true);
@@ -67,11 +71,9 @@ export function QuicklinksSection({
               ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-border/60 bg-card p-12 text-center shadow-sm">
+          <div className={cn("rounded-xl border border-dashed bg-card p-12 text-center shadow-sm", theme.infoBorder)}>
             <p className="text-sm font-medium">未找到快捷链接</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              新增一个快捷链接以加速常用导航。
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">新增一个快捷链接以加速常用导航。</p>
           </div>
         )}
       </section>

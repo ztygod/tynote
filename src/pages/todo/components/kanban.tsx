@@ -45,12 +45,6 @@ const exampleFeatures = Array.from({ length: 20 })
     priority: faker.helpers.arrayElement(["low", "medium", "high"]),
   }));
 
-const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
-
 const shortDateFormatter = new Intl.DateTimeFormat("zh-CN", {
   month: "short",
   day: "numeric",

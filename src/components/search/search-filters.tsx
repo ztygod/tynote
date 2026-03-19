@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/popover";
 import {
   useSearchStore,
-  type SearchFilters,
   type TimeRange,
 } from "@/store/search-store";
 import { format } from "date-fns";
@@ -33,7 +32,9 @@ const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
 ];
 
 export function SearchFilters() {
-  const { filters, updateFilter, clearFilters } = useSearchStore();
+  const filters = useSearchStore((state) => state.filters);
+  const updateFilter = useSearchStore((state) => state.updateFilter);
+  const clearFilters = useSearchStore((state) => state.clearFilters);
   const [showAdvanced, setShowAdvanced] = React.useState(false);
 
   const activeFilterCount = React.useMemo(() => {

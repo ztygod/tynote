@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, SlidersHorizontal } from "lucide-react";
 
 export interface FilterOptions {
   categories: string[];
@@ -17,60 +16,56 @@ export interface FilterOptions {
 }
 
 interface StarredFilterProps {
-  onFilterChange?: (filters: Partial<FilterOptions>) => void;
+  value: FilterOptions;
+  onFilterChange: (filters: Partial<FilterOptions>) => void;
   availableCategories?: string[];
 }
 
 export function StarredFilter({
+  value,
   onFilterChange,
   availableCategories = ["技术", "设计", "产品", "运营", "其他"],
 }: StarredFilterProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<"recent" | "oldest" | "alphabetical">(
-    "recent",
-  );
-
   const handleCategoryToggle = (category: string) => {
-    const updated = selectedCategories.includes(category)
-      ? selectedCategories.filter((c) => c !== category)
-      : [...selectedCategories, category];
-    setSelectedCategories(updated);
-    onFilterChange?.({ categories: updated, sortBy });
+    const updated = value.categories.includes(category)
+      ? value.categories.filter((c) => c !== category)
+      : [...value.categories, category];
+    onFilterChange({ categories: updated });
   };
 
   const handleSortChange = (sort: "recent" | "oldest" | "alphabetical") => {
-    setSortBy(sort);
-    onFilterChange?.({ categories: selectedCategories, sortBy: sort });
+    onFilterChange({ sortBy: sort });
   };
 
-  const hasActiveFilters = selectedCategories.length > 0 || sortBy !== "recent";
+  const activeCount = value.categories.length + (value.sortBy !== "recent" ? 1 : 0);
+  const hasActiveFilters = activeCount > 0;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          size="sm"
-          className={`gap-2 ${
+          className={`h-10 gap-2 rounded-xl ${
             hasActiveFilters ? "border-primary text-primary" : ""
           }`}
         >
+          <SlidersHorizontal size={16} />
           筛选
           {hasActiveFilters && (
-            <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-              {selectedCategories.length}
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              {activeCount}
             </span>
           )}
           <ChevronDown size={16} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 rounded-xl">
         <DropdownMenuLabel>分类</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {availableCategories.map((category) => (
           <DropdownMenuCheckboxItem
             key={category}
-            checked={selectedCategories.includes(category)}
+            checked={value.categories.includes(category)}
             onCheckedChange={() => handleCategoryToggle(category)}
           >
             {category}
@@ -81,19 +76,19 @@ export function StarredFilter({
         <DropdownMenuLabel>排序</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
-          checked={sortBy === "recent"}
+          checked={value.sortBy === "recent"}
           onCheckedChange={() => handleSortChange("recent")}
         >
-          最新优先
+          最近优先
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          checked={sortBy === "oldest"}
+          checked={value.sortBy === "oldest"}
           onCheckedChange={() => handleSortChange("oldest")}
         >
           最早优先
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
-          checked={sortBy === "alphabetical"}
+          checked={value.sortBy === "alphabetical"}
           onCheckedChange={() => handleSortChange("alphabetical")}
         >
           按名称排序

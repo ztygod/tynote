@@ -1,12 +1,12 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -14,9 +14,9 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { Heart, ExternalLink, Copy, Edit, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { StarredItem, useStarredStore } from "@/store/starred-store";
+import { Copy, Edit, ExternalLink, Heart, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface StarredCardProps {
   item: StarredItem;
@@ -25,144 +25,113 @@ interface StarredCardProps {
 }
 
 export function StarredCard({ item, onEdit, onDelete }: StarredCardProps) {
-  const { toggleStar } = useStarredStore();
+  const toggleStar = useStarredStore((state) => state.toggleStar);
 
   const handleToggleStar = () => {
     toggleStar(item.id);
   };
 
   const handleCopyUrl = () => {
-    if (item.url) {
-      navigator.clipboard.writeText(item.url);
-      toast.success("链接已复制到剪贴板");
+    if (!item.url) {
+      return;
     }
+    navigator.clipboard.writeText(item.url);
+    toast.success("链接已复制");
   };
 
   const handleOpenInNewTab = () => {
-    if (item.url) {
-      const newWindow = window.open(item.url, "_blank", "noopener,noreferrer");
-      if (newWindow) {
-        newWindow.opener = null;
-      }
+    if (!item.url) {
+      return;
+    }
+    const newWindow = window.open(item.url, "_blank", "noopener,noreferrer");
+    if (newWindow) {
+      newWindow.opener = null;
     }
   };
 
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <Card
-          className="group relative
-            hover:-translate-y-2
-            hover:shadow-xl
-            transition-all duration-300
-            rounded-xl cursor-pointer
-            border border-transparent
-            hover:border-primary/30
-            bg-card
-            hover:bg-accent/40"
-        >
+        <Card className="group h-full rounded-xl border-border/60 shadow-sm transition-colors hover:border-primary/40">
           {item.image ? (
-            <div className="w-full h-40 bg-muted overflow-hidden rounded-t-lg -mt-6">
+            <div className="-mt-6 aspect-[16/9] w-full overflow-hidden rounded-t-xl bg-muted">
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
               />
             </div>
           ) : (
-            <div
-              className="
-                w-full h-40 -mt-6 rounded-t-lg
-                flex items-center justify-center
-                bg-indigo-100 text-indigo-700
-                px-2 text-center
-            "
-              title={item.title}
-            >
-              <span className="text-lg font-semibold line-clamp-2">
-                {item.title}
-              </span>
+            <div className="-mt-6 flex aspect-[16/9] w-full items-center justify-center rounded-t-xl bg-muted px-4">
+              <span className="line-clamp-2 text-center text-base font-semibold">{item.title}</span>
             </div>
           )}
-          <CardHeader className="flex-1">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <CardTitle className="text-lg line-clamp-2 hover:text-primary transition-colors">
-                  {item.title}
-                </CardTitle>
-                <CardDescription className="text-xs mt-2">
-                  {new Date(item.date).toLocaleDateString("zh-CN", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                  })}
-                </CardDescription>
-              </div>
+
+          <CardHeader className="gap-3 pb-3">
+            <div className="flex items-start justify-between gap-3">
+              <CardTitle className="line-clamp-2 text-base leading-6">{item.title}</CardTitle>
               <Button
+                type="button"
                 variant="ghost"
-                size="sm"
+                size="icon"
+                className="h-8 w-8 shrink-0 rounded-lg"
                 onClick={handleToggleStar}
-                className="flex-shrink-0"
               >
                 <Heart
-                  size={18}
-                  className={
-                    item.starred
-                      ? "fill-red-500 text-red-500"
-                      : "text-muted-foreground"
-                  }
+                  size={16}
+                  className={item.starred ? "fill-rose-500 text-rose-500" : "text-muted-foreground"}
                 />
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              {new Date(item.date).toLocaleDateString("zh-CN", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })}
+            </p>
           </CardHeader>
 
-          <CardContent className="space-y-3 flex-1 flex flex-col">
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {item.description}
-            </p>
+          <CardContent className="flex flex-1 flex-col gap-3 pb-4">
+            <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
 
-            <div className="flex flex-wrap gap-1">
-              <Badge variant="secondary" className="text-xs">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary" className="rounded-lg text-xs font-medium">
                 {item.category}
               </Badge>
               {item.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <Badge key={tag} variant="outline" className="rounded-lg text-xs font-normal">
                   {tag}
                 </Badge>
               ))}
               {item.tags.length > 2 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="rounded-lg text-xs font-normal">
                   +{item.tags.length - 2}
                 </Badge>
               )}
             </div>
+          </CardContent>
 
-            {item.url && (
-              <div className="flex gap-2 mt-auto pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 text-xs"
-                  onClick={() => window.open(item.url, "_blank")}
-                >
-                  <ExternalLink size={14} className="mr-1" />
+          <CardFooter className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
+            {item.url ? (
+              <>
+                <Button type="button" variant="outline" className="h-9 rounded-lg" onClick={handleOpenInNewTab}>
+                  <ExternalLink size={14} />
                   访问
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 text-xs"
-                  onClick={handleCopyUrl}
-                >
-                  <Copy size={14} className="mr-1" />
+                <Button type="button" variant="outline" className="h-9 rounded-lg" onClick={handleCopyUrl}>
+                  <Copy size={14} />
                   复制
                 </Button>
-              </div>
+              </>
+            ) : (
+              <div className="col-span-2 text-xs text-muted-foreground">该收藏未设置链接</div>
             )}
-          </CardContent>
+          </CardFooter>
         </Card>
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-48">
+
+      <ContextMenuContent className="w-48 rounded-xl">
         {onEdit && (
           <ContextMenuItem onClick={() => onEdit(item)}>
             <Edit size={16} className="mr-2" />

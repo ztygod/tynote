@@ -1,6 +1,5 @@
 import { AppSidebar } from "./sidebar";
 import { SidebarInset, SidebarProvider } from "../ui/sidebar";
-import { AppHeader } from "./header/app-header";
 import { Outlet } from "react-router";
 
 export function AppLayout() {

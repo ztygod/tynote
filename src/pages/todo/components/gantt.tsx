@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/shadcn-io/gantt";
 // @ts-ignore
 import { groupBy } from "lodash";
-import { EyeIcon, LinkIcon, TrashIcon } from "lucide-react";
+import { EyeIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {

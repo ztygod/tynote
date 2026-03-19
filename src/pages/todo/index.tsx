@@ -5,7 +5,6 @@ import {
   ListTodo,
   MousePointerClick,
   Plus,
-  Sprout,
   SquareCheckBig,
   Sun,
   LayoutGrid,

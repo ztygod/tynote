@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronRight, LucideIcon } from "lucide-react";
 import { AddButtonGroupDropdown } from "./components/add-button";
+import { Link } from "react-router";
 
 interface Item {
   title: string;
@@ -71,10 +72,10 @@ function RenderItems({ items, depth = 0 }: { items: Item[]; depth?: number }) {
                 </>
               ) : (
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <a href={item.url}>
+                  <Link to={item.url}>
                     {Icon && <Icon className="mr-2 h-4 w-4" />}
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               )}
             </SidebarMenuItem>

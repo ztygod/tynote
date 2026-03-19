@@ -3,6 +3,10 @@ import { useQuicklinksStore } from "@/store/quicklinks-store";
 import { HomeHero } from "./components/home-hero";
 import { QuicklinksSection } from "./components/quicklinks-section";
 import { RecentActivitySection } from "./components/recent-note-item";
+import {
+  filterQuicklinksByQuery,
+  getLatestQuicklinkUpdatedAt,
+} from "@/features/quicklinks/model/selectors";
 
 export function HomePage() {
   const quicklinks = useQuicklinksStore((s) => s.quicklinks);
@@ -14,24 +18,11 @@ export function HomePage() {
   }, [initializeQuicklinks]);
 
   const filteredQuicklinks = React.useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return quicklinks;
-    }
-
-    return quicklinks.filter((quicklink) => {
-      const title = quicklink.title?.toLowerCase() ?? "";
-      const description = quicklink.description?.toLowerCase() ?? "";
-      return title.includes(query) || description.includes(query);
-    });
+    return filterQuicklinksByQuery(quicklinks, searchQuery);
   }, [quicklinks, searchQuery]);
 
   const latestUpdatedAt = React.useMemo(() => {
-    if (quicklinks.length === 0) {
-      return null;
-    }
-
-    return Math.max(...quicklinks.map((quicklink) => quicklink.updatedAt));
+    return getLatestQuicklinkUpdatedAt(quicklinks);
   }, [quicklinks]);
 
   return (

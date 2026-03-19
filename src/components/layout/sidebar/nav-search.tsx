@@ -7,7 +7,7 @@ import { isApplePlatform } from "@/utils";
 
 export function NavSearch() {
   const { state } = useSidebar();
-  const { setIsOpen } = useSearchStore();
+  const setIsOpen = useSearchStore((store) => store.setIsOpen);
 
   // 监听键盘快捷键
   useEffect(() => {

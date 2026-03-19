@@ -25,7 +25,7 @@ interface StarredCardProps {
 }
 
 export function StarredCard({ item, onEdit, onDelete }: StarredCardProps) {
-  const { toggleStar } = useStarredStore();
+  const toggleStar = useStarredStore((state) => state.toggleStar);
 
   const handleToggleStar = () => {
     toggleStar(item.id);

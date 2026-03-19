@@ -21,7 +21,7 @@ export function DeleteConfirmDialog({
   onOpenChange,
   item,
 }: DeleteConfirmDialogProps) {
-  const { deleteStarredItem } = useStarredStore();
+  const deleteStarredItem = useStarredStore((state) => state.deleteStarredItem);
 
   const handleDelete = () => {
     if (item) {

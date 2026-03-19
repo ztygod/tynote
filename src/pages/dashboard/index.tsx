@@ -8,6 +8,13 @@ import ChartsPanel from "@/pages/dashboard/components/charts-panel";
 import { DashboardHero } from "@/pages/dashboard/components/dashboard-hero";
 import { StatsGrid } from "@/pages/dashboard/components/stats-grid";
 import WorkloadCard from "@/pages/dashboard/components/workload-card";
+import {
+  buildQuicklinksTrendData,
+  countQuicklinksByType,
+  countRecentQuicklinks,
+  filterQuicklinksByQuery,
+  getLatestQuicklinkUpdatedAt,
+} from "@/features/quicklinks/model/selectors";
 
 function formatRelativeTime(timestamp: number | null) {
   if (!timestamp) {
@@ -53,55 +60,23 @@ export function DashboardPage() {
   }, [autoRefresh, initializeQuicklinks]);
 
   const filteredQuicklinks = React.useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return quicklinks;
-    }
-
-    return quicklinks.filter((item) => {
-      const title = item.title?.toLowerCase() ?? "";
-      const description = item.description?.toLowerCase() ?? "";
-      return title.includes(query) || description.includes(query);
-    });
+    return filterQuicklinksByQuery(quicklinks, searchQuery);
   }, [quicklinks, searchQuery]);
 
   const latestUpdatedAt = React.useMemo(() => {
-    if (filteredQuicklinks.length === 0) {
-      return null;
-    }
-
-    return Math.max(...filteredQuicklinks.map((item) => item.updatedAt));
+    return getLatestQuicklinkUpdatedAt(filteredQuicklinks);
   }, [filteredQuicklinks]);
 
   const recentCount = React.useMemo(() => {
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    return filteredQuicklinks.filter((item) => item.updatedAt >= sevenDaysAgo).length;
+    return countRecentQuicklinks(filteredQuicklinks);
   }, [filteredQuicklinks]);
 
   const externalCount = React.useMemo(() => {
-    return filteredQuicklinks.filter((item) => item.linkType === "external").length;
+    return countQuicklinksByType(filteredQuicklinks, "external");
   }, [filteredQuicklinks]);
 
   const trendData = React.useMemo(() => {
-    const formatter = new Intl.DateTimeFormat("zh-CN", {
-      month: "numeric",
-      day: "numeric",
-    });
-
-    return Array.from({ length: 7 }, (_, index) => {
-      const date = new Date();
-      date.setHours(0, 0, 0, 0);
-      date.setDate(date.getDate() - (6 - index));
-
-      const start = date.getTime();
-      const end = start + 24 * 60 * 60 * 1000;
-      const value = quicklinks.filter((item) => item.updatedAt >= start && item.updatedAt < end).length;
-
-      return {
-        label: formatter.format(date),
-        value,
-      };
-    });
+    return buildQuicklinksTrendData(quicklinks);
   }, [quicklinks]);
 
   const stats = [

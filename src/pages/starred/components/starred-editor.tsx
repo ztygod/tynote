@@ -36,7 +36,8 @@ export function StarredEditor({
   onOpenChange,
   item,
 }: StarredEditorProps) {
-  const { addStarredItem, updateStarredItem } = useStarredStore();
+  const addStarredItem = useStarredStore((state) => state.addStarredItem);
+  const updateStarredItem = useStarredStore((state) => state.updateStarredItem);
   const isEditing = !!item;
 
   // Form state

@@ -1,7 +1,7 @@
-export function Inbox() {
+export function InboxPage() {
   return (
     <>
-      <h1>iNOBOX</h1>
+      <h1>Inbox</h1>
     </>
   );
 }

@@ -84,17 +84,15 @@ async function performSearch(
 }
 
 export function SearchDialog() {
-  const {
-    isOpen,
-    setIsOpen,
-    mode,
-    setMode,
-    query,
-    setQuery,
-    results,
-    setResults,
-    setIsLoading,
-  } = useSearchStore();
+  const isOpen = useSearchStore((state) => state.isOpen);
+  const setIsOpen = useSearchStore((state) => state.setIsOpen);
+  const mode = useSearchStore((state) => state.mode);
+  const setMode = useSearchStore((state) => state.setMode);
+  const query = useSearchStore((state) => state.query);
+  const setQuery = useSearchStore((state) => state.setQuery);
+  const results = useSearchStore((state) => state.results);
+  const setResults = useSearchStore((state) => state.setResults);
+  const setIsLoading = useSearchStore((state) => state.setIsLoading);
 
   const handleSearch = React.useCallback(async () => {
     if (!query.trim()) {

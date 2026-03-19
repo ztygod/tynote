@@ -11,7 +11,10 @@ import { DeleteConfirmDialog } from "./components/delete-confirm-dialog";
 import { TagFilter } from "./components/tag-filter";
 
 export function StarredPage() {
-  const { items, initializeStarredItems } = useStarredStore();
+  const items = useStarredStore((state) => state.items);
+  const initializeStarredItems = useStarredStore(
+    (state) => state.initializeStarredItems
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>({
     categories: [],
@@ -136,6 +139,10 @@ export function StarredPage() {
     setFilters((prev) => ({ ...prev, tags }));
   };
 
+  const handleFilterChange = (nextFilters: Partial<FilterOptions>) => {
+    setFilters((prev) => ({ ...prev, ...nextFilters }));
+  };
+
   return (
     <div className="bg-muted/20 text-foreground min-h-screen">
       <div className="max-w-screen-xl mx-auto p-4 sm:p-7 md:p-8">
@@ -193,7 +200,7 @@ export function StarredPage() {
               />
               <StarredFilter
                 availableCategories={availableCategories}
-                onFilterChange={setFilters}
+                onFilterChange={handleFilterChange}
               />
             </div>
           </div>

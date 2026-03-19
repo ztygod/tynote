@@ -13,7 +13,6 @@ import {
   CaseUpper,
   Clock8,
   Info,
-  Plus,
   Search,
   Settings,
   User,
@@ -44,7 +43,7 @@ function SortItem() {
           <PopoverContent className="w-52 p-4 shadow-lg rounded-lg">
             <div className="flex flex-col gap-3">
               {sortItem.map((item) => (
-                <div className="flex gap-2 item-center">
+                <div key={item.name} className="flex gap-2 item-center">
                   <item.icon className="w-5 h-5 my-auto" />
                   <div className="my-auto text-sm">{item.name}</div>
                 </div>

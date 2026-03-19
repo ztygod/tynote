@@ -1,6 +1,8 @@
 import { Clock3, FileText, MessageSquare, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { PageThemeTokens } from "@/lib/page-theme";
+import { cn } from "@/lib/utils";
 
 interface ActivityItem {
   id: string;
@@ -9,6 +11,10 @@ interface ActivityItem {
   detail: string;
   actor: string;
   time: string;
+}
+
+interface RecentActivitySectionProps {
+  theme: PageThemeTokens;
 }
 
 const ACTIVITIES: ActivityItem[] = [
@@ -67,17 +73,15 @@ function getTypeMeta(type: ActivityItem["type"]) {
   };
 }
 
-export function RecentActivitySection() {
+export function RecentActivitySection({ theme }: RecentActivitySectionProps) {
   return (
     <section className="space-y-4">
       <div className="space-y-1">
         <h2 className="text-lg font-semibold tracking-tight">最近动态</h2>
-        <p className="text-sm text-muted-foreground">
-          不离开首页即可快速了解最近更新。
-        </p>
+        <p className="text-sm text-muted-foreground">不离开首页即可快速了解最近更新。</p>
       </div>
 
-      <Card className="rounded-xl border-border/60 shadow-sm">
+      <Card className="rounded-xl border-border/60 bg-card shadow-sm">
         <CardHeader className="px-6 py-5">
           <CardTitle className="text-base font-semibold">最新事件</CardTitle>
         </CardHeader>
@@ -89,10 +93,14 @@ export function RecentActivitySection() {
             return (
               <article
                 key={activity.id}
-                className="flex items-start justify-between gap-4 rounded-xl border border-border/60 bg-muted/25 p-4"
+                className={cn(
+                  "flex items-start justify-between gap-4 rounded-xl border p-4",
+                  theme.infoBorder,
+                  "bg-background/80",
+                )}
               >
                 <div className="flex min-w-0 items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-chart-2/15 text-chart-2">
+                  <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", theme.heroIcon)}>
                     <Icon size={16} />
                   </div>
                   <div className="min-w-0 space-y-1.5">
@@ -106,7 +114,7 @@ export function RecentActivitySection() {
                 </div>
 
                 <div className="flex shrink-0 flex-col items-end gap-2">
-                  <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-xs">
+                  <Badge variant="secondary" className={cn("rounded-full px-2.5 py-1 text-xs", theme.infoBadge)}>
                     {meta.label}
                   </Badge>
                   <span className="text-xs text-muted-foreground">{activity.time}</span>

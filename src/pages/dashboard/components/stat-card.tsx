@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import type { PageThemeTokens } from "@/lib/page-theme";
 import { cn } from "@/lib/utils";
 
 type StatCardTone = "neutral" | "info" | "success" | "warning";
@@ -33,6 +34,10 @@ export interface StatCardProps {
   trend?: string;
 }
 
+interface ThemedStatCardProps extends StatCardProps {
+  theme: PageThemeTokens;
+}
+
 export function StatCard({
   title,
   value,
@@ -40,21 +45,20 @@ export function StatCard({
   icon: Icon,
   tone = "neutral",
   trend,
-}: StatCardProps) {
+  theme,
+}: ThemedStatCardProps) {
+  const iconTone = tone === "info" ? theme.heroIcon : toneStyles[tone].icon;
+  const chipTone = tone === "info" ? theme.infoBadge : toneStyles[tone].chip;
+
   return (
-    <Card className="rounded-xl border-border/60 shadow-sm">
+    <Card className="rounded-xl border-border/60 bg-card shadow-sm">
       <CardContent className="flex h-full flex-col gap-6 p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p className="text-3xl font-semibold tracking-tight">{value}</p>
           </div>
-          <div
-            className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-xl",
-              toneStyles[tone].icon,
-            )}
-          >
+          <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl", iconTone)}>
             <Icon size={20} />
           </div>
         </div>
@@ -62,10 +66,7 @@ export function StatCard({
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm leading-6 text-muted-foreground">{description}</p>
           {trend ? (
-            <Badge
-              variant="secondary"
-              className={cn("rounded-full border-0 px-2.5 py-1", toneStyles[tone].chip)}
-            >
+            <Badge variant="secondary" className={cn("rounded-full border-0 px-2.5 py-1", chipTone)}>
               {trend}
             </Badge>
           ) : null}

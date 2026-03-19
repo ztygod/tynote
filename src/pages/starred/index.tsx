@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getPageTheme } from "@/lib/page-theme";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -36,6 +38,7 @@ const DEFAULT_FILTERS: FilterOptions = {
 };
 
 export function StarredPage() {
+  const theme = getPageTheme("starred");
   const items = useStarredStore((state) => state.items);
   const initializeStarredItems = useStarredStore((state) => state.initializeStarredItems);
 
@@ -206,19 +209,19 @@ export function StarredPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/20 text-foreground">
+    <div className={cn("min-h-screen text-foreground", theme.pageBackground)}>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
-        <Card className="rounded-xl border-border/60 bg-gradient-to-br from-card via-card to-muted/30 shadow-sm">
+        <Card className={cn("rounded-xl border-border/60 shadow-sm", theme.heroGradient)}>
           <CardHeader className="space-y-4 pb-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-3">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-chart-4/15 text-chart-4">
+                <div className={cn("inline-flex h-11 w-11 items-center justify-center rounded-xl", theme.heroIcon)}>
                   <Sparkles size={20} />
                 </div>
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
                     <CardTitle className="text-3xl font-semibold tracking-tight">收藏中心</CardTitle>
-                    <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs">
+                    <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-xs", theme.infoBadge)}>
                       Starred
                     </Badge>
                   </div>
@@ -228,7 +231,12 @@ export function StarredPage() {
                 </div>
               </div>
 
-              <div className="grid gap-3 rounded-xl border border-border/60 bg-background/80 p-4 sm:grid-cols-2 sm:min-w-[320px]">
+              <div
+                className={cn(
+                  "grid gap-3 rounded-xl border bg-background/90 p-4 sm:grid-cols-2 sm:min-w-[320px]",
+                  theme.infoBorder,
+                )}
+              >
                 <div className="space-y-1">
                   <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">总收藏</p>
                   <p className="text-sm font-medium">{items.length}</p>
@@ -264,7 +272,7 @@ export function StarredPage() {
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="搜索标题、描述或标签"
-                  className="h-10 rounded-xl border-border/60 bg-background pl-9"
+                  className={cn("h-10 rounded-xl border-border/60 bg-background pl-9", theme.inputRing)}
                 />
               </div>
 
@@ -291,19 +299,23 @@ export function StarredPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button variant="outline" className="h-10 rounded-xl" onClick={handleOpenSavePreset}>
+                <Button
+                  variant="outline"
+                  className={cn("h-10 rounded-xl", theme.outlineButton)}
+                  onClick={handleOpenSavePreset}
+                >
                   <Bookmark size={14} />
                   保存预设
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-10 rounded-xl"
+                  className={cn("h-10 rounded-xl", theme.outlineButton)}
                   disabled={!activePreset || activePreset.isDefault}
                   onClick={handleDeletePreset}
                 >
                   删除预设
                 </Button>
-                <Button className="h-10 rounded-xl" onClick={handleAddNew}>
+                <Button className={cn("h-10 rounded-xl", theme.primaryButton)} onClick={handleAddNew}>
                   <Plus size={16} />
                   新增收藏
                 </Button>

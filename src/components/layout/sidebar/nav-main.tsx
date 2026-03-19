@@ -17,7 +17,7 @@ export function NavMain({
     url: string;
     icon: LucideIcon;
     isActive?: boolean;
-    color?: string;
+    iconClassName?: string;
   }[];
 }) {
   return (
@@ -27,7 +27,7 @@ export function NavMain({
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild isActive={item.isActive}>
               <Link to={item.url} className="flex items-center gap-2">
-                <item.icon className={item.color} />
+                <item.icon className={item.iconClassName} />
                 {item.title}
               </Link>
             </SidebarMenuButton>

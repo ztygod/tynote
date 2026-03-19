@@ -1,9 +1,11 @@
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { Plus, Search, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import type { PageThemeTokens } from "@/lib/page-theme";
+import { cn } from "@/lib/utils";
 
 interface HomeHeroProps {
   searchQuery: string;
@@ -12,6 +14,7 @@ interface HomeHeroProps {
   totalCount: number;
   latestUpdatedAt: number | null;
   onClearSearch: () => void;
+  theme: PageThemeTokens;
 }
 
 function formatUpdatedAt(timestamp: number | null) {
@@ -29,43 +32,43 @@ export function HomeHero({
   totalCount,
   latestUpdatedAt,
   onClearSearch,
+  theme,
 }: HomeHeroProps) {
   return (
-    <section className="rounded-2xl border border-border/60 bg-gradient-to-br from-card via-card to-muted/40 shadow-sm">
+    <section className={cn("rounded-2xl border border-border/60 shadow-sm", theme.heroGradient)}>
       <div className="flex flex-col gap-6 p-6 md:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-4">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-chart-2/15 text-chart-2">
+            <div className={cn("inline-flex h-12 w-12 items-center justify-center rounded-xl", theme.heroIcon)}>
               <Sparkles size={22} />
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-                  首页工作台
-                </h1>
-                <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs">
+                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">首页工作台</h1>
+                <Badge variant="secondary" className={cn("rounded-full px-3 py-1 text-xs", theme.infoBadge)}>
                   核心视图
                 </Badge>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
-                只保留高频核心内容，用于快速导航和查看最近动态。
+                聚焦高频入口和最近活动，减少切页成本，让你更快进入工作状态。
               </p>
             </div>
           </div>
 
-          <div className="grid gap-3 rounded-xl border border-border/60 bg-background/80 p-4 sm:grid-cols-2 lg:min-w-[320px]">
+          <div
+            className={cn(
+              "grid gap-3 rounded-xl border bg-background/90 p-4 sm:grid-cols-2 lg:min-w-[320px]",
+              theme.infoBorder
+            )}
+          >
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                快捷链接
-              </p>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">快捷链接</p>
               <p className="text-sm font-medium">
                 {matchedCount} / {totalCount}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                最近更新
-              </p>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">最近更新</p>
               <p className="text-sm font-medium">{formatUpdatedAt(latestUpdatedAt)}</p>
             </div>
           </div>
@@ -81,11 +84,11 @@ export function HomeHero({
               value={searchQuery}
               onChange={(event) => onSearchChange(event.target.value)}
               placeholder="搜索快捷链接"
-              className="h-11 rounded-xl border-border/60 bg-background pl-10"
+              className={cn("h-11 rounded-xl border-border/60 bg-background pl-10", theme.inputRing)}
             />
           </div>
 
-          <Button className="h-11 rounded-xl px-4" onClick={onClearSearch}>
+          <Button className={cn("h-11 rounded-xl px-4", theme.primaryButton)} onClick={onClearSearch}>
             <Plus size={16} />
             清空筛选
           </Button>

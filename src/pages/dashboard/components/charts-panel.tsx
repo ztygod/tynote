@@ -1,3 +1,5 @@
+import type { PageThemeTokens } from "@/lib/page-theme";
+import { cn } from "@/lib/utils";
 import { PanelCard } from "@/pages/dashboard/components/panel-card";
 
 type ChartPoint = {
@@ -5,15 +7,18 @@ type ChartPoint = {
   value: number;
 };
 
-type Props = { data: ChartPoint[] };
+type Props = {
+  data: ChartPoint[];
+  theme: PageThemeTokens;
+};
 
-function Sparkline({ data }: { data: ChartPoint[] }) {
+function Sparkline({ data, theme }: { data: ChartPoint[]; theme: PageThemeTokens }) {
   const width = 640;
   const height = 220;
 
   if (data.length === 0) {
     return (
-      <div className="flex min-h-[220px] items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 text-sm text-muted-foreground">
+      <div className={cn("flex min-h-[220px] items-center justify-center rounded-xl border border-dashed bg-muted/20 text-sm text-muted-foreground", theme.infoBorder)}>
         暂无趋势数据
       </div>
     );
@@ -34,26 +39,26 @@ function Sparkline({ data }: { data: ChartPoint[] }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-3 text-sm">
-        <div className="rounded-xl border border-border/60 bg-muted/30 px-4 py-3">
+        <div className={cn("rounded-xl border bg-card px-4 py-3", theme.infoBorder)}>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">峰值</p>
           <p className="mt-1 text-lg font-semibold">{max}</p>
         </div>
-        <div className="rounded-xl border border-border/60 bg-muted/30 px-4 py-3">
+        <div className={cn("rounded-xl border bg-card px-4 py-3", theme.infoBorder)}>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">最低</p>
           <p className="mt-1 text-lg font-semibold">{min}</p>
         </div>
-        <div className="rounded-xl border border-border/60 bg-muted/30 px-4 py-3">
+        <div className={cn("rounded-xl border bg-card px-4 py-3", theme.infoBorder)}>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">时间范围</p>
           <p className="mt-1 text-lg font-semibold">{data.length} 天</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+      <div className={cn("rounded-xl border bg-background/80 p-4", theme.infoBorder)}>
         <svg
           width="100%"
           height="220"
           viewBox={`0 0 ${width} ${height}`}
-          className="text-chart-2"
+          className={theme.chartText}
           preserveAspectRatio="none"
         >
           <defs>
@@ -109,14 +114,14 @@ function Sparkline({ data }: { data: ChartPoint[] }) {
   );
 }
 
-export function ChartsPanel({ data }: Props) {
+export function ChartsPanel({ data, theme }: Props) {
   return (
     <PanelCard
       title="近 7 天更新趋势"
       description="基于快捷链接的最近更新时间生成，帮助判断内容活跃度。"
-      className="xl:col-span-2"
+      className={cn("xl:col-span-2", theme.infoBorder)}
     >
-      <Sparkline data={data} />
+      <Sparkline data={data} theme={theme} />
     </PanelCard>
   );
 }

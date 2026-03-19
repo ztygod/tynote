@@ -25,6 +25,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavSearch } from "./nav-search";
+import { getPageThemeByPath } from "@/lib/page-theme";
 
 const data = {
   user: {
@@ -55,32 +56,32 @@ const data = {
       url: "/home",
       icon: Home,
       isActive: true,
-      color: "text-blue-500",
+      iconClassName: getPageThemeByPath("/home").iconText,
     },
     {
       title: "Todo",
       url: "/todo",
       icon: AlarmClockCheck,
-      color: "text-emerald-500",
+      iconClassName: getPageThemeByPath("/todo").iconText,
     },
     {
       title: "Dashboard",
       url: "/dashboard",
       icon: Bot,
-      color: "text-purple-500",
+      iconClassName: getPageThemeByPath("/dashboard").iconText,
     },
     {
       title: "Starred",
       url: "/starred",
       icon: Star,
       badge: "10",
-      color: "text-yellow-500",
+      iconClassName: getPageThemeByPath("/starred").iconText,
     },
     {
       title: "Inbox",
       url: "/inbox",
       icon: Inbox,
-      color: "text-black-500",
+      iconClassName: getPageThemeByPath("/inbox").iconText,
     },
   ],
   projects: [
